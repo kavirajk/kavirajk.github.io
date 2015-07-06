@@ -7,6 +7,7 @@ relative_permalinks: true
 # Setup
 title:               Kaviraj
 tagline:             notes. thoughts
+description:	     Kaviraj's notes & thoughts
 url:                 https://kavirajk.github.io
 paginate:            1
 baseurl:             ""
@@ -28,3 +29,6 @@ author:
 version:             2.0.0
 github:
   repo:              https://github.com/kavirajk/kavirajk.github.io
+
+pages_list:
+  Archive: '/archive'
