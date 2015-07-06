@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Understanding regular expression parsing
+comments: True
 ---
 
 I was reading a wonderfull article on [python regular expression](http://pymotw.com/2/re/). And I was playing with some example code.
