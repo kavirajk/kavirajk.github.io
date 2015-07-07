@@ -1,5 +1,5 @@
 {% include head.html %}
-
+{% include google_analytics.html %}
 <!DOCTYPE html>
 <html lang="en">
   <body>
@@ -18,6 +18,9 @@
 
       <main>
         {{ content }}
+	{% include twitter_plug.html %}
+	<br/>
+	<br/>
       </main>
       {% include comments.html %}
       <footer class="footer">
