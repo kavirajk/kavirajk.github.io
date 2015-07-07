@@ -28,7 +28,7 @@ pattern = "ab+" # a followed by one or more b
 
 re.findall(pattern, text)
 # output: ['abbb', 'ab', 'ab', 'ab']
-# What?? Where is "abb"?
+# wait.. Where is "abb"?
 {% endhighlight %}
 
 The pattern ```ab+``` means __'a' followed by one or more 'b'__. So "abb" should also be present in output. But it was not!!
