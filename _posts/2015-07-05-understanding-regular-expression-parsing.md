@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Understanding regular expression parsing
+summary: Understanding how python regular expression parses the given text(input) and matches the pattern
 comments: True
 twitter: True
 tags: [python,regular-expression]
