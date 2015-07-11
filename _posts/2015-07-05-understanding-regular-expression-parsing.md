@@ -32,6 +32,8 @@ re.findall(pattern, text)
 # wait.. Where is "abb"?
 {% endhighlight %}
 
+<!--break-->
+
 The pattern ```ab+``` means __'a' followed by one or more 'b'__. So "abb" should also be present in output. But it was not!!
 
 So I tried to come up with simple logic to understand how regular expression parsing takes place to produce the output. And here it is!
