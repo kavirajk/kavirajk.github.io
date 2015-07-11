@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+ <title>Kaviraj</title>
+ <link href="https://kavirajk.github.io/atom.xml" rel="self"/>
+ <link href="https://kavirajk.github.io/"/>
+ <updated>2015-07-11T14:54:54+05:30</updated>
+ <id>https://kavirajk.github.io</id>
+ <author>
+   <name>Kaviraj Kanagaraj</name>
+   <email>kavirajkanagaraj@gmail.com</email>
+ </author>
+
+ 
+ <entry>
+   <title>Understanding regular expression parsing</title>
+   <link href="https://kavirajk.github.io/understanding-regular-expression-parsing"/>
+   <updated>2015-07-05T00:00:00+05:30</updated>
+   <id>https://kavirajk.github.io/understanding-regular-expression-parsing</id>
+   <content type="html">&lt;p&gt;I was reading a wonderfull article on &lt;a href=&quot;http://pymotw.com/2/re/&quot;&gt;python regular expression&lt;/a&gt;. And I was playing with some example code.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;re&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;aabbbaaababaab&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;pattern&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;abb&amp;quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findall&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pattern&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# output: [&amp;#39;abb&amp;#39;]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# pattern &amp;#39;abb&amp;#39; found at index 1:3&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;then I got stuck with following code. I couldn’t understand why the output is the way it is.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;re&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;aabbbaaababaab&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;pattern&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;ab+&amp;quot;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# a followed by one or more b&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findall&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pattern&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# output: [&amp;#39;abbb&amp;#39;, &amp;#39;ab&amp;#39;, &amp;#39;ab&amp;#39;, &amp;#39;ab&amp;#39;]&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# wait.. Where is &amp;quot;abb&amp;quot;?&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;!--break--&gt;
+
+&lt;p&gt;The pattern &lt;code&gt;ab+&lt;/code&gt; means &lt;strong&gt;‘a’ followed by one or more ‘b’&lt;/strong&gt;. So “abb” should also be present in output. But it was not!!&lt;/p&gt;
+
+&lt;p&gt;So I tried to come up with simple logic to understand how regular expression parsing takes place to produce the output. And here it is!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;how-regular-expression-parses-the-pattern&quot;&gt;How regular expression parses the pattern&lt;/h3&gt;
+
+&lt;p&gt;text - Actual text to search for(input)&lt;/p&gt;
+
+&lt;p&gt;pattern - What to search for&lt;/p&gt;
+
+&lt;p&gt;(say, in a give log file(text) find all ip address(pattern))&lt;/p&gt;
+
+&lt;h4 id=&quot;steps&quot;&gt;Steps&lt;/h4&gt;
+&lt;ol&gt;
+  &lt;li&gt;Start from the beginning of the ‘text’&lt;/li&gt;
+  &lt;li&gt;Start looking for ‘pattern’ in ‘text’&lt;/li&gt;
+  &lt;li&gt;If fails at initially, move to next char in ‘text’ and proceed from step 2&lt;/li&gt;
+  &lt;li&gt;If passes, then parse character by character until fails. print the passed characters. Move to next char and proceed from step 2&lt;/li&gt;
+  &lt;li&gt;If reached end of ‘text’, print the passed characters and stop&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;good-news&quot;&gt;Good news!&lt;/h4&gt;
+
+&lt;p&gt;Now I know why the output doesn’t contain “abb”.&lt;/p&gt;
+
+&lt;p&gt;Its because of step 4 of parsing. When the parsing “abb” is done, its still &lt;strong&gt;‘passing’&lt;/strong&gt; the pattern rules so it continous to “abbb”. And now next character is ‘a’ and pattern &lt;code&gt;ab+&lt;/code&gt; fails. So parsing stops and prints “abbb” then continue its parsing from next character ‘a’&lt;/p&gt;
+</content>
+ </entry>
+ 
+
+</feed>
