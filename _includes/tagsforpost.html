@@ -1,0 +1,13 @@
+{% capture mytags%}
+{% for tag in include.tags %}
+{{ tag }}
+{% endfor %}
+{% endcapture %}
+
+{% assign sortedtags = mytags | split:' ' | sort %}
+
+{% for tag in sortedtags  %}
+<a href="{{site.baseurl}}/tag/{{tag}}">#{{tag}}</a>
+{% endfor %}
+
+
