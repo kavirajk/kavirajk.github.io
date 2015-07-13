@@ -31,9 +31,11 @@ put the below code in either ```~/.emacs``` file or ```init.el``` file in ```~/.
 
 {% endhighlight %}
 
-All this code does is pretty straight forward. Here ```'split-function'``` is an
-argument which will be default elisp split function. In ```(funcall s-f)``` we call the
-default split function then using```(set-window-buffer)```elisp function we change the buffer of newly
+All this code does is pretty straight forward. ```lexical-let``` needs common lisp libraries.
+Thats what ```(eval-when-compile (require 'cl))``` does.
+
+```'split-function'``` is an argument which will be default elisp split function.
+In ```(funcall s-f)``` we call the default split function then using```(set-window-buffer)```elisp function we change the buffer of newly
 created window ```(next-window)``` with different buffer ```(other-buffer)```.
 
 Also rebind the default split keys ```C-x2```(horizontal) and ```C-x3```(vertical) to our
