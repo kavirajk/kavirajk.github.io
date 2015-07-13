@@ -21,6 +21,7 @@ We can customize it by little elisp code as below.
 put the below code in either ```~/.emacs``` file or ```init.el``` file in ```~/.emacs.d``` directory.
 
 {% highlight elisp %}
+(eval-when-compile (require 'cl))
 
 (defun split-window-func-with-other-buffer (split-function)
   (lexical-let ((s-f split-function))
