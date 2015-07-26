@@ -93,6 +93,10 @@ You can find solutions to all the exercises in the manual on my [github repo](ht
 
 On the whole, I enjoyed reading the manual. Hope anyone who wants to start customizing the Emacs would enjoy as much as I did.
 
+[Introduction to programming in Emacs Lisp](https://www.gnu.org/software/emacs/manual/eintr.html) covers basics of emacs lisp very well so that you can do basic emacs customizations and extensions. That being said there are many more important topics(like Macros) not touched by this manual.
+
+The comprehensive guide for emacs lisp would be another manual called [The GNU Emacs Lisp Reference Manual](https://www.gnu.org/software/emacs/manual/html_node/elisp/index.html)
+
 >“You don’t have to like Emacs to like it”—this seemingly paradoxical
 >statement is the secret of GNU Emacs.  The plain, ‘out of the box’ Emacs
 >is a generic tool.  Most people who use it, customize it to suit
