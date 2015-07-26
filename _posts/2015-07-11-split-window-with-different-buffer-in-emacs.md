@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Split window with different buffer in Emacs
+title: "Emacs: Split window with different buffer"
 summary: 'Everytime you split a window(both vertical and horizontal) in Emacs,
 by default the same buffer appears in newly created window. We can customize
 it. '
