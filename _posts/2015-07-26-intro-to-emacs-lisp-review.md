@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Review: Emacs Lisp Intro Manual"
-summary: Learning Emacs Lisp(a.k.a elsip) helps in understanding how Emacs works, customizing Emacs and writing extention packages for Emacs. Emacs Lisp Intro is excellent manual for getting started on Emacs Lisp
+summary: Learning Emacs Lisp(a.k.a elisp) helps in understanding how Emacs works, customizing Emacs and writing extention packages for Emacs. Emacs Lisp Intro is excellent manual for getting started on Emacs Lisp
 comments: True
 twitter: True
 tags: [emacs, elisp]
