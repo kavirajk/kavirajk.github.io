@@ -69,7 +69,7 @@ Most of the exercises are just straightforword and easy. Some exercies on Regula
 * **Buffer related functions:** Understanding how some of the basic buffer related functions works```(mark-whole-buffer)```, ```(append-to-buffer)```, ```(copy-to-buffer)``` and ```(insert-buffer)```
 * **Regular expressions:** Understanding how regular expressions are used in finding end-of-sentence, end-of-paragraph, end-of-definition in functions like ```(forward-paragraph)``` and ```(forward-sentence)```
 * **Graph project:** This is one of the coolest chapter. Counting and displaying the number of words in ```defun``` of many elisp files as a graph
-* **Basic customizing of .emacs file:** Very basic customisation including how to add 'hook' and setting up 'file-local-variables' such as type of coding(say utf-8)
+* **Basic customizing of .emacs file:** Basic customisation including how to add 'hook', setting up 'file-local-variables', setting up key-bindings, X11 color customization etc.
 
 ### Other things you will learn:
 
