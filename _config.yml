@@ -6,7 +6,7 @@ relative_permalinks: true
 
 # Setup
 title:               Kaviraj
-tagline:             notes. thoughts
+tagline:             notes & thoughts
 description:	     Kaviraj's notes & thoughts
 url:                 https://kaviraj.me
 paginate:            4
