@@ -19,6 +19,8 @@ Unicode and Character Sets (No Excuses!)](http://www.joelonsoftware.com/articles
 
 Every emoji is a single unicode character that can be upto 4 bytes long depending on type of encoding used. <strong>Yes, every character is just one byte is no longer true.</strong>
 
+<!--break-->
+
 ### Interpreting Emoji
 The letter <strong>'A'</strong> corresponds to <strong>'65'</strong> in decimal and <strong>'0x41'</strong> in hex. Similarly emoji 😃 corresponds
 to <strong>'128515'</strong> in decimal and <strong>'0x1F603'</strong> in hexadecimal. Though every emoji(unicode) can be represented in decimal or
