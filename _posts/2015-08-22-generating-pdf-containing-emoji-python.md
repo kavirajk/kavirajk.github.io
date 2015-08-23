@@ -79,6 +79,8 @@ We are going to use ```reportlab``` python library to generate pdf
 sudo pip install reportlab
 {% endhighlight %}
 
+<i>Note: All the code samples used here are tested using python 3.4</i>
+
 Here is a simple example that writes text containing emoji to pdf
 
 {% highlight python%}
