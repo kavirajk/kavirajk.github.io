@@ -11,7 +11,7 @@ tags: [python, emoji, reportlab]
 [Emojis](https://en.wikipedia.org/wiki/Emoji) 😃 🎉 👍 💕 have become so popular. Anyone who used [Whatsapp](https://www.whatsapp.com/) or
 [Instagram](https://instagram.com/) knows how cool emojis are 😎. And they are everywhere now. Emoji originated in Japan. The word "emoji" means "Picture(e) letter(moji)" in Japanese.
 
-Technically, emojis are [subset](http://unicode.org/emoji/charts/full-emoji-list.html) of [Unicode character set](http://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt).  In short, Unicode is the collection of every writable symbol available on the planet. That being said unicode includes symbols from every language that exist.
+Technically, emojis are [subset](http://unicode.org/emoji/charts/full-emoji-list.html) of [Unicode character set](http://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt).  In short, Unicode is the collection of every writable symbol available on the planet. That being said, unicode includes symbols from every language that exist.
 
 There are different types of encoding used to interpret different sets of unicode. Most popular is "UTF-8" encoding. To understand how unicode are
 interpreted, stored and retrieved here is a great article [The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About
@@ -26,7 +26,7 @@ The letter <strong>'A'</strong> corresponds to <strong>'65'</strong> in decimal 
 to <strong>'128515'</strong> in decimal and <strong>'0x1F603'</strong> in hexadecimal. Though every emoji(unicode) can be represented in decimal or
 hexadecimal, the standard way to denote emoji is by 'code point'.
 
-code point for is 😃 is <strong>U+1F603</strong>. Every emoji(unicode) is represented in code point as "U+" (to denote unicode) and followed by its
+Code point for 😃 is <strong>U+1F603</strong>. An emoji(unicode) in code point is represented as "U+" (to denote unicode) followed by its
 hex value "1F603". In Python it is represented as ```"\U0001f603" (u"\U0001f603" in python 2)```.
 [Here](http://apps.timwhitlock.info/emoji/tables/unicode) is a list of emojis with its code points.
 
