@@ -31,6 +31,8 @@ does some magic and return the exact email address as string ```kavirajkanagaraj
 
 And much more basic questions..
 
+<!--break-->
+
 These questions made me to dig into [source code](https://github.com/django/django) of django. While doing that
 [Pro Django by Marty Alchin](http://www.amazon.com/Pro-Django-Experts-Voice-Development/dp/1430258098) helped a lot.
 
