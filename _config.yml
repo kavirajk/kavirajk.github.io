@@ -9,6 +9,7 @@ title:               Kaviraj
 tagline:             notes & thoughts
 description:	     Kaviraj's notes & thoughts
 url:                 https://kaviraj.me
+enforce_ssl:         kaviraj.me
 paginate:            4
 baseurl:             ""
 
