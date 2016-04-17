@@ -37,13 +37,13 @@ These questions made me to dig into [source code](https://github.com/django/djan
 [Pro Django by Marty Alchin](http://www.amazon.com/Pro-Django-Experts-Voice-Development/dp/1430258098) helped a lot.
 
 >Note: This Pro Django book is kind of outdated. Its written for django
->1.5 . During that time AppCache was used instead of App Register which is one of
+>1.5 . During that time, AppCache was used instead of App Register which is one of
 >the [great improvement](https://docs.djangoproject.com/en/1.9/ref/applications/#application-registry)
->introduced in django 1.7. App Register is something very important which deals with how django
->loads and register every app. We will cover about App Register in depth in
+>introduced in django 1.7. App Register is something which deals with how django
+>loads and register every app. We will cover App Register in depth in the
 >upcoming series.
 
-But most of the fundamental design remains same as explained in this book. Its
+But most of the fundamental design and architecture of django remains same as explained in this book. Its
 really a great book to read if you are interested in understanding django internals.
 
 
@@ -56,7 +56,7 @@ really a great book to read if you are interested in understanding django intern
   * And of course its fun to know how something works under the hood !!!
 
 ## Some insights
-In rest of this post. I will try to address top 2 of the questions metioned before.
+In rest of this post, I will try to address top 2 questions metioned before.
 
 >Note: All code examples are tested using python3.5 and django1.9
 
