@@ -2,7 +2,12 @@
 #
 # Use of `relative_permalinks` ensures post links from the index work properly.
 permalink:           "/:title"
-
+future: True
+gems:
+  - jekyll-paginate
+  - redcarpet
+  - jekyll-gist
+  - pygments.rb
 # Setup
 title:               Kaviraj
 tagline:             notes & thoughts
