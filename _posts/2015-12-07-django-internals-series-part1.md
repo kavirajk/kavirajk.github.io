@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Django: Internals series - Part 1"
+title: "Django: Internals series - Gotchas"
 summary: "Understanding how core components of django works under the hood"
 comments: True
 twitter: True
