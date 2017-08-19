@@ -8,6 +8,7 @@ gems:
   - redcarpet
   - jekyll-gist
   - pygments.rb
+markdown: redcarpet
 # Setup
 title:               Kaviraj
 tagline:             notes & thoughts
