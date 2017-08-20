@@ -209,8 +209,8 @@ func (r *Record) Start() error {
 		for {
 			r.Lock()
 			r.cond.Wait()
-			r.Unlock()
 			fmt.Fprintf(w, "%s\n", r.buf)
+			r.Unlock()
 
 		}
 	}
