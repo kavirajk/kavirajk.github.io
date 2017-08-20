@@ -29,6 +29,7 @@ Lets say the event be waiting for non-zero value in a struct field.
 ## Naive way: Use infinite for loop.
 
 ```go
+
 type Record struct {
 	sync.Mutex
 	data string
@@ -42,10 +43,13 @@ func main() {
 	go func(rec *Record) {
 		defer wg.Done()
 		for {
+			rec.Lock()
 			if rec.data != "" {
 				fmt.Println("Data: ", rec.data)
+				rec.Unlock()
 				return
 			}
+			rec.Unlock()
 		}
 	}(rec)
 
@@ -179,7 +183,7 @@ type Record struct {
 	writers []io.Writer
 }
 
-func Record(writers ...io.Writer) *master {
+func NewRecord(writers ...io.Writer) *Record {
 	r := &Record{writers: writers}
 	r.cond = sync.NewCond(r)
 	return r
