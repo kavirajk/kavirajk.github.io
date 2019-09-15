@@ -24,6 +24,8 @@ I will be using my project called **Heck(Distributed health checker)** to explor
 
 Here is the [design spec](https://paper.dropbox.com/doc/Heck-A-distributed-health-checker--Ak3aLZkVHqDLGRNLy~NHtxsFAg-WptgaNKpocdUVc1Ir8mr2) of the project for more details.
 
+<!--break-->
+
 ## Causal Consistency
 I think I should probably start here. **Consistency Models** are core part of any distributed system. Consistency models defines formally what behaviors are possible in a distributed system. For example consider social media where people put comments on post. Strict consistency models like **Linearizability** guarantees the comments are seen in same "Order" to all the clients who are viewing it by introducing the "global order" in some way(used in etcd, Consul key values stores).
 
