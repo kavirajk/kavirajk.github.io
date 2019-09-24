@@ -4,7 +4,7 @@ title: What I want to do at Recurse Center
 summary: Scopes of the projects that I want to work on Recurse Center
 comments: True
 twitter: True
-tags: [recurse-center, distributed-systems, rust]
+tags: [recurse-center, distributed-systems, rust, heck]
 ---
 I'll be joining [Recurse Center](https://www.recurse.com/) next week.
 
