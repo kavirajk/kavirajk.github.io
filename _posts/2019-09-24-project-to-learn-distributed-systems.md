@@ -6,10 +6,10 @@ comments: True
 twitter: True
 tags: [recurse-center, distributed-systems, rust, heck]
 ---
-In the last [post](https://kaviraj.me/going-to-recurse-center/), I tried to narrow down what are the areas in distributed systems I was going to focus on at [Recurse Center](https://www.recurse.com/). But haven't clearly explained the project I had in my mind clearly. This post is to fill that gap.
+In the last [post](https://kaviraj.me/going-to-recurse-center/), I tried to narrow down what are the areas in distributed systems I was going to focus on at [Recurse Center](https://www.recurse.com/). But haven't clearly explained the project I had in my mind. This post is to fill that gap.
 
 ## The Problem
-A simple health checker of 'n' servers. Given a bunch of servers to track the health check, monitor the health checks of those servers and provide interface to get the health check status of those servers. 
+A simple health checker of 'n' servers. Given a bunch of servers to track the health check, it monitors the health checks of those servers and provide interface to get the health check status of those servers. 
 
 We have two version of project. First version is a naive way of solving it via single process. Then we build on top it solving the same problem with multiple processes.
 
