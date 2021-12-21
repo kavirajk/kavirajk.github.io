@@ -1,0 +1,53 @@
+I"?<p>I was reading a wonderfull article on <a href="http://pymotw.com/2/re/">python regular expression</a>. And I was playing with some example code.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s">"aabbbaaababaab"</span>
+<span class="n">pattern</span> <span class="o">=</span> <span class="s">"abb"</span>
+
+<span class="n">re</span><span class="p">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+<span class="c1"># output: ['abb']
+# pattern 'abb' found at index 1:3</span></code></pre></figure>
+
+<p>then I got stuck with following code. I couldn’t understand why the output is the way it is.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s">"aabbbaaababaab"</span>
+<span class="n">pattern</span> <span class="o">=</span> <span class="s">"ab+"</span> <span class="c1"># a followed by one or more b
+</span>
+<span class="n">re</span><span class="p">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+<span class="c1"># output: ['abbb', 'ab', 'ab', 'ab']
+# wait.. Where is "abb"?</span></code></pre></figure>
+
+<!--break-->
+
+<p>The pattern <code class="language-plaintext highlighter-rouge">ab+</code> means <strong>‘a’ followed by one or more ‘b’</strong>. So “abb” should also be present in output. But it was not!!</p>
+
+<p>So I tried to come up with simple logic to understand how regular expression parsing takes place to produce the output. And here it is!</p>
+
+<hr />
+
+<h3 id="how-regular-expression-parses-the-pattern">How regular expression parses the pattern</h3>
+
+<p>text - Actual text to search for(input)</p>
+
+<p>pattern - What to search for</p>
+
+<p>(say, in a give log file(text) find all ip address(pattern))</p>
+
+<h4 id="steps">Steps</h4>
+<ol>
+  <li>Start from the beginning of the ‘text’</li>
+  <li>Start looking for ‘pattern’ in ‘text’</li>
+  <li>If fails at initially, move to next char in ‘text’ and proceed from step 2</li>
+  <li>If passes, then parse character by character until fails. print the passed characters. Move to next char and proceed from step 2</li>
+  <li>If reached end of ‘text’, print the passed characters and stop</li>
+</ol>
+
+<h4 id="good-news">Good news!</h4>
+
+<p>Now I know why the output doesn’t contain “abb”.</p>
+
+<p>Its because of step 4 of parsing. When the parsing “abb” is done, its still <strong>‘passing’</strong> the pattern rules so it continous to “abbb”. And now next character is ‘a’ and pattern <code class="language-plaintext highlighter-rouge">ab+</code> fails. So parsing stops and prints “abbb” then continue its parsing from next character ‘a’</p>
+:ET

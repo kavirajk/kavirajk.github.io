@@ -1,0 +1,23 @@
+I"'<p>I was reading a wonderfull article on <a href="http://pymotw.com/2/re/">python regular expression</a>. And I was playing with some example code.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s">"aabbbaaababaab"</span>
+<span class="n">pattern</span> <span class="o">=</span> <span class="s">"abb"</span>
+
+<span class="n">re</span><span class="p">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+<span class="c1"># output: ['abb']
+# pattern 'abb' found at index 1:3</span></code></pre></figure>
+
+<p>then I got stuck with following code. I couldn’t understand why the output is the way it is.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s">"aabbbaaababaab"</span>
+<span class="n">pattern</span> <span class="o">=</span> <span class="s">"ab+"</span> <span class="c1"># a followed by one or more b
+</span>
+<span class="n">re</span><span class="p">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+<span class="c1"># output: ['abbb', 'ab', 'ab', 'ab']
+# wait.. Where is "abb"?</span></code></pre></figure>
+
+:ET

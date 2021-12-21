@@ -1,0 +1,19 @@
+I""<p>Once you start using emacs for most of your editing/coding tasks, then that will make you serious about using it productively</p>
+
+<p>From then on, you can no longer use Emacs without customizing it. Yea, of course there are tons of elisp code snippet out there to customize it just by copy pasting without understanding what it does or how it works.</p>
+
+<p>But that no longer works on the longer run. At some point of time you have get started on learning Emacs lisp.</p>
+
+<p>Same thing happened to me few weeks back. I got tired of customizing emacs just by including some piece of elisp code from somewhere on the internet into my <code class="language-plaintext highlighter-rouge">.emacs</code> file without even understanding what the code does.</p>
+
+<p>So at the end,</p>
+
+<ul>
+  <li>My .emacs file got messy without organizing.</li>
+  <li>Its very frustating to debug if something goes wrong.</li>
+  <li>I started to get afraid of parenthesis 😧</li>
+</ul>
+
+<p>Just then, I figured it out I just need to get started on learning Emacs lisp.</p>
+
+:ET

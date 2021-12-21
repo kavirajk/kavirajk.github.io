@@ -1,0 +1,28 @@
+I"�<p>Hi Everyone. Welcome to Django internal series. Goal of this entire series is to share my experience on understanding the
+internals of django.</p>
+
+<p>In part 1 of this series we try to understand why its important to understand
+django internals.</p>
+
+<p>I started using django about an year ago. It’s a part of our <a href="https://medium.com/@launchyard/our-typical-technology-stack-b52371035e4b">company’s
+technology stack</a>. We love building apps with Django(of course who wouldn’t?). During early
+stage of using django, I really suck at debugging as I felt django is
+doing lot of magic under the hood. Few basic questions started bothering me.</p>
+
+<ol>
+  <li>I am declaring all fields in model as <strong>class variables</strong>. How come I am able to
+access those as <strong>instance variables</strong> on any of those model instances?</li>
+  <li>What is happening when I access any field of a model instance. For e.g take
+a look at <code class="language-plaintext highlighter-rouge">simple_django_model.py</code> snippet below. There we have single
+field called <code class="language-plaintext highlighter-rouge">email</code> of type <code class="language-plaintext highlighter-rouge">models.EmailField()</code>. Now if try to get
+<code class="language-plaintext highlighter-rouge">user.email</code> it should technically return <code class="language-plaintext highlighter-rouge">models.EmailField</code> instance right?, but django
+does some magic and return the exact email address as string <code class="language-plaintext highlighter-rouge">kavirajkanagaraj@gmail.com</code></li>
+  <li>How does “class Meta” inside any model affects the model behaviour?</li>
+  <li>What does really ‘app’ mean to django?(HINT: Every directory with
+<code class="language-plaintext highlighter-rouge">__init__.py</code> is not an app)</li>
+  <li>How django creates actual model instance from db tables?</li>
+</ol>
+
+<p>And much more basic questions..</p>
+
+:ET

@@ -1,0 +1,13 @@
+I"{<h2 id="understanding-emoji">Understanding Emoji</h2>
+<p><a href="https://en.wikipedia.org/wiki/Emoji">Emojis</a> 😃 🎉 👍 💕 have become so popular. Anyone who used <a href="https://www.whatsapp.com/">Whatsapp</a> or
+<a href="https://instagram.com/">Instagram</a> knows how cool emojis are 😎. And they are everywhere now. Emoji originated in Japan. The word “emoji” means “Picture(e) letter(moji)” in Japanese.</p>
+
+<p>Technically, emojis are <a href="http://unicode.org/emoji/charts/full-emoji-list.html">subset</a> of <a href="http://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt">Unicode character set</a>.  In short, Unicode is the collection of every writable symbol available on the planet. That being said, unicode includes symbols from every language that exist.</p>
+
+<p>There are different types of encoding used to interpret different sets of unicode. Most popular is “UTF-8” encoding. To understand how unicode are
+interpreted, stored and retrieved here is a great article <a href="http://www.joelonsoftware.com/articles/Unicode.html">The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About
+Unicode and Character Sets (No Excuses!)</a></p>
+
+<p>Every emoji is a single unicode character that can be upto 4 bytes long depending on type of encoding used. <strong>Yes, every character is just one byte is no longer true.</strong></p>
+
+:ET

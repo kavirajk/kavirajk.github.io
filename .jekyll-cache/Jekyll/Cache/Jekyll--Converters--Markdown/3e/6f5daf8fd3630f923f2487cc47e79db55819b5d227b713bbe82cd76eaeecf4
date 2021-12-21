@@ -1,0 +1,225 @@
+I"U<h2 id="understanding-emoji">Understanding Emoji</h2>
+<p><a href="https://en.wikipedia.org/wiki/Emoji">Emojis</a> 😃 🎉 👍 💕 have become so popular. Anyone who used <a href="https://www.whatsapp.com/">Whatsapp</a> or
+<a href="https://instagram.com/">Instagram</a> knows how cool emojis are 😎. And they are everywhere now. Emoji originated in Japan. The word “emoji” means “Picture(e) letter(moji)” in Japanese.</p>
+
+<p>Technically, emojis are <a href="http://unicode.org/emoji/charts/full-emoji-list.html">subset</a> of <a href="http://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt">Unicode character set</a>.  In short, Unicode is the collection of every writable symbol available on the planet. That being said, unicode includes symbols from every language that exist.</p>
+
+<p>There are different types of encoding used to interpret different sets of unicode. Most popular is “UTF-8” encoding. To understand how unicode are
+interpreted, stored and retrieved here is a great article <a href="http://www.joelonsoftware.com/articles/Unicode.html">The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About
+Unicode and Character Sets (No Excuses!)</a></p>
+
+<p>Every emoji is a single unicode character that can be upto 4 bytes long depending on type of encoding used. <strong>Yes, every character is just one byte is no longer true.</strong></p>
+
+<!--break-->
+
+<h3 id="interpreting-emoji">Interpreting Emoji</h3>
+<p>The letter <strong>‘A’</strong> corresponds to <strong>‘65’</strong> in decimal and <strong>‘0x41’</strong> in hex. Similarly emoji 😃 corresponds
+to <strong>‘128515’</strong> in decimal and <strong>‘0x1F603’</strong> in hexadecimal. Though every emoji(unicode) can be represented in decimal or
+hexadecimal, the standard way to denote emoji is by ‘code point’.</p>
+
+<p>Code point for 😃 is <strong>U+1F603</strong>. An emoji(unicode) in code point is represented as “U+” (to denote unicode) followed by its
+hex value “1F603”. In Python it is represented as <code class="language-plaintext highlighter-rouge">"\U0001f603" (u"\U0001f603" in python 2)</code>.
+<a href="http://apps.timwhitlock.info/emoji/tables/unicode">Here</a> is a list of emojis with its code points.</p>
+
+<p>Every emoji have a name. Some apps like Github, Slack, Basecamp, etc, provide short name for emoji to make it easy to remember. You can find the list
+of emoji with its short name here <a href="http://www.emoji-cheat-sheet.com/">emoji-cheat-sheet</a></p>
+
+<h3 id="interpreting-with-python">Interpreting with Python</h3>
+<p>Get the name and category of an emoji using <code class="language-plaintext highlighter-rouge">unicodedata</code> module of python</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">unicodedata</span>
+
+<span class="c1"># in python2 use u'\U0001f603'
+</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">print</span><span class="p">(</span><span class="s">'</span><span class="se">\U0001f603</span><span class="s">'</span><span class="p">)</span>
+<span class="err">😃</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="nb">ord</span><span class="p">(</span><span class="s">'</span><span class="se">\U0001f608</span><span class="s">'</span><span class="p">)</span>
+<span class="mi">128515</span>
+
+<span class="c1"># use 'unichr' in python2
+</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="nb">chr</span><span class="p">(</span><span class="mh">0x1f603</span><span class="p">)</span> <span class="c1"># hex
+</span><span class="err">😃</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="nb">chr</span><span class="p">(</span><span class="mi">128515</span><span class="p">)</span> <span class="c1"># decimal
+</span><span class="err">😃</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">unicodedata</span><span class="p">.</span><span class="n">name</span><span class="p">(</span><span class="s">'</span><span class="se">\U0001f603</span><span class="s">'</span><span class="p">)</span> 
+<span class="s">'SMILING FACE WITH OPEN MOUTH'</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">unicodedata</span><span class="p">.</span><span class="n">category</span><span class="p">(</span><span class="s">'</span><span class="se">\U0001f603</span><span class="s">'</span><span class="p">)</span> 
+<span class="s">'So'</span> <span class="c1"># S- Symbol, o- Other</span></code></pre></figure>
+
+<p>For more info on <code class="language-plaintext highlighter-rouge">unicode.category</code>
+<a href="https://docs.python.org/2/howto/unicode.html#unicode-properties">https://docs.python.org/2/howto/unicode.html#unicode-properties</a></p>
+
+<p>Emojis are becoming popular. You happened to see emojis is many web apps and mobile apps. Rendering these emojis inside a browser or an app is another problem.</p>
+
+<p>If you are able to see all colorful emojis I have used in this blog, then your browser supports emojis well.
+Recently in our <a href="https://launchyard.com">company</a> we happend to work on some features related to printing text containing emojis to pdf.</p>
+
+<p>Wait.. But how do we render these emojis in pdf?. The problem boils-down to type of font you are using.</p>
+
+<h2 id="printing-emojis-to-pdf">Printing emojis to pdf</h2>
+
+<p>We are going to use <code class="language-plaintext highlighter-rouge">reportlab</code> python library to generate pdf</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>pip <span class="nb">install </span>reportlab</code></pre></figure>
+
+<p><i>Note: All the code samples used here are tested using python 3.4</i></p>
+
+<p>Here is a simple example that writes text containing emoji to pdf</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">reportlab.platypus</span> <span class="kn">import</span> <span class="n">Paragraph</span>
+<span class="kn">from</span> <span class="nn">reportlab.lib.styles</span> <span class="kn">import</span> <span class="n">getSampleStyleSheet</span>
+<span class="kn">from</span> <span class="nn">reportlab.pdfgen</span> <span class="kn">import</span> <span class="n">canvas</span>
+<span class="kn">from</span> <span class="nn">reportlab.rl_config</span> <span class="kn">import</span> <span class="n">defaultPageSize</span>
+
+<span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">defaultPageSize</span>
+<span class="n">pdf_content</span> <span class="o">=</span> <span class="s">"It's emoji time </span><span class="se">\u263A</span><span class="s"> </span><span class="se">\U0001F61C</span><span class="s">. Let's add some cool emotions </span><span class="se">\U0001F48F</span><span class="s"> </span><span class="se">\u270C</span><span class="s">. And some more </span><span class="se">\u2764</span><span class="s"> </span><span class="se">\U0001F436</span><span class="s">"</span>
+
+<span class="n">styles</span> <span class="o">=</span> <span class="n">getSampleStyleSheet</span><span class="p">()</span>
+<span class="n">para</span> <span class="o">=</span> <span class="n">Paragraph</span><span class="p">(</span><span class="n">pdf_content</span><span class="p">,</span> <span class="n">styles</span><span class="p">[</span><span class="s">"Title"</span><span class="p">])</span>
+<span class="n">canv</span> <span class="o">=</span> <span class="n">canvas</span><span class="p">.</span><span class="n">Canvas</span><span class="p">(</span><span class="s">'emoji.pdf'</span><span class="p">)</span>
+
+<span class="n">para</span><span class="p">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+<span class="n">para</span><span class="p">.</span><span class="n">drawOn</span><span class="p">(</span><span class="n">canv</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">canv</span><span class="p">.</span><span class="n">save</span><span class="p">()</span></code></pre></figure>
+
+<p>Here is the preview of how it looks</p>
+
+<p><img src="/asserts/images/emoji.png" border="1px solid blue" /></p>
+
+<p>What!! this is obviously not we wanted. Unsupported emojis are shown as “black-box” by default font(Helvetica-Bold)</p>
+
+<p>Lets try with custom font that supports emoji symbols.</p>
+
+<h3 id="using-custom-font">Using custom font</h3>
+<p><a href="http://www.fonts2u.com/symbola.font">Symbola</a> font supports most of the emoji symbols.</p>
+
+<p>Simple program that writes emoji content to pdf using custom font(Symbola)</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">reportlab.platypus</span> <span class="kn">import</span> <span class="n">Paragraph</span>
+<span class="kn">from</span> <span class="nn">reportlab.lib.styles</span> <span class="kn">import</span> <span class="n">getSampleStyleSheet</span>
+<span class="kn">from</span> <span class="nn">reportlab.pdfgen</span> <span class="kn">import</span> <span class="n">canvas</span>
+<span class="kn">from</span> <span class="nn">reportlab.rl_config</span> <span class="kn">import</span> <span class="n">defaultPageSize</span>
+<span class="kn">from</span> <span class="nn">reportlab.pdfbase</span> <span class="kn">import</span> <span class="n">pdfmetrics</span>
+<span class="kn">from</span> <span class="nn">reportlab.pdfbase.ttfonts</span> <span class="kn">import</span> <span class="n">TTFont</span>
+
+<span class="c1"># Register font 'font_file' is location of symbola.ttf file
+</span>
+<span class="n">font_file</span> <span class="o">=</span> <span class="s">'/home/kaviraj/Downloads/fonts/Symbola_full/Symbola.ttf'</span>
+<span class="n">symbola_font</span> <span class="o">=</span> <span class="n">TTFont</span><span class="p">(</span><span class="s">'Symbola'</span><span class="p">,</span> <span class="n">font_file</span><span class="p">)</span>
+<span class="n">pdfmetrics</span><span class="p">.</span><span class="n">registerFont</span><span class="p">(</span><span class="n">symbola_font</span><span class="p">)</span>
+
+<span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">defaultPageSize</span>
+<span class="n">pdf_content</span> <span class="o">=</span> <span class="s">"It's emoji time </span><span class="se">\u263A</span><span class="s"> </span><span class="se">\U0001F61C</span><span class="s">. Let's add some cool emotions </span><span class="se">\U0001F48F</span><span class="s"> </span><span class="se">\u270C</span><span class="s">. And some more </span><span class="se">\u2764</span><span class="s"> </span><span class="se">\U0001F436</span><span class="s">"</span>
+
+<span class="n">styles</span> <span class="o">=</span> <span class="n">getSampleStyleSheet</span><span class="p">()</span>
+<span class="n">styles</span><span class="p">[</span><span class="s">"Title"</span><span class="p">].</span><span class="n">fontName</span> <span class="o">=</span> <span class="s">'Symbola'</span>
+<span class="n">para</span> <span class="o">=</span> <span class="n">Paragraph</span><span class="p">(</span><span class="n">pdf_content</span><span class="p">,</span> <span class="n">styles</span><span class="p">[</span><span class="s">"Title"</span><span class="p">])</span>
+<span class="n">canv</span> <span class="o">=</span> <span class="n">canvas</span><span class="p">.</span><span class="n">Canvas</span><span class="p">(</span><span class="s">'emoji.pdf'</span><span class="p">)</span>
+
+<span class="n">para</span><span class="p">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+<span class="n">para</span><span class="p">.</span><span class="n">drawOn</span><span class="p">(</span><span class="n">canv</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">canv</span><span class="p">.</span><span class="n">save</span><span class="p">()</span></code></pre></figure>
+
+<p>Here is the preview of how it looks with Symbola font.</p>
+
+<p><img src="/asserts/images/emoji_symbola.png" border="1px solid blue" /></p>
+
+<p>Cool. Symbola print these emojis as promised. But Wait! can’t we get colorful emoji like we see in browser?. Yes. here comes the <a href="http://emojione.com/">Emojione</a></p>
+
+<h3 id="intro-to-emojione">Intro to Emojione</h3>
+<p><a href="http://emojione.com/">Emojione</a> provides collection of wide range of emojis(Almost every emojis supported by Instagram, Facebook, Slack, etc..)</p>
+
+<p>Collection includes all the png and svg image files for every emoji they support. Emojione provide following cool features</p>
+
+<p>Any emoji can be coverted from it’s</p>
+
+<ul>
+  <li>Unicode to corresponding PNG or SVG image</li>
+  <li>Short name to corresponding PNG or SVG image</li>
+  <li>Unicode to short name (and vice versa)</li>
+  <li>Ascii symbol to corresponding PNG or SVG image( say, convert :) to 😄)</li>
+</ul>
+
+<p>But unfortunately they doesn’t provide any library for python. So we have written one by ourselves 👍 and we call it <a href="https://github.com/launchyard/emojipy">Emojipy</a></p>
+
+<h3 id="inserting-emoji-using-emojipy-and-reportlab">Inserting emoji using Emojipy and reportlab</h3>
+
+<p>Usually any app(web or mobile) render emojis by replacing its unicode with corresponding PNG or SVG image(thats why you could see all the colorful emojis present in this blog).</p>
+
+<p>Lets do the same thing with pdf</p>
+
+<h3 id="installing-emojipy">Installing <code class="language-plaintext highlighter-rouge">emojipy</code></h3>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">git clone git@github.com:launchyard/emojipy.git
+<span class="nb">cd </span>emojipy
+<span class="nb">sudo </span>python setup.py <span class="nb">install</span></code></pre></figure>
+
+<p>Below is the simple python program that use <code class="language-plaintext highlighter-rouge">emojipy</code> library to render emoji in pdf</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">reportlab.platypus</span> <span class="kn">import</span> <span class="n">Paragraph</span>
+<span class="kn">from</span> <span class="nn">reportlab.lib.styles</span> <span class="kn">import</span> <span class="n">getSampleStyleSheet</span>
+<span class="kn">from</span> <span class="nn">reportlab.pdfgen</span> <span class="kn">import</span> <span class="n">canvas</span>
+<span class="kn">from</span> <span class="nn">reportlab.rl_config</span> <span class="kn">import</span> <span class="n">defaultPageSize</span>
+<span class="kn">from</span> <span class="nn">reportlab.pdfbase</span> <span class="kn">import</span> <span class="n">pdfmetrics</span>
+<span class="kn">from</span> <span class="nn">reportlab.pdfbase.ttfonts</span> <span class="kn">import</span> <span class="n">TTFont</span>
+<span class="kn">from</span> <span class="nn">emojipy</span> <span class="kn">import</span> <span class="n">Emoji</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1"># Pdf doesn't need any unicode inside &lt;image&gt;'s alt attribute
+</span><span class="n">Emoji</span><span class="p">.</span><span class="n">unicode_alt</span> <span class="o">=</span> <span class="bp">False</span>
+
+
+<span class="k">def</span> <span class="nf">replace_with_emoji_pdf</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="s">"""
+    Reportlab's Paragraph doesn't accept normal html &lt;image&gt; tag's attributes
+    like 'class', 'alt'. Its a little hack to remove those attrbs
+    """</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">Emoji</span><span class="p">.</span><span class="n">to_image</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'class="emojione"'</span><span class="p">,</span> <span class="s">'height=%s width=%s'</span> <span class="o">%</span>
+                        <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">re</span><span class="p">.</span><span class="n">sub</span><span class="p">(</span><span class="s">'alt="'</span><span class="o">+</span><span class="n">Emoji</span><span class="p">.</span><span class="n">shortcode_regexp</span><span class="o">+</span><span class="s">'"'</span><span class="p">,</span> <span class="s">''</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+<span class="c1"># Register font 'font_file' is location of symbola.ttf file
+</span>
+<span class="n">font_file</span> <span class="o">=</span> <span class="s">'/home/kaviraj/Downloads/fonts/Symbola_full/Symbola.ttf'</span>
+<span class="n">symbola_font</span> <span class="o">=</span> <span class="n">TTFont</span><span class="p">(</span><span class="s">'Symbola'</span><span class="p">,</span> <span class="n">font_file</span><span class="p">)</span>
+<span class="n">pdfmetrics</span><span class="p">.</span><span class="n">registerFont</span><span class="p">(</span><span class="n">symbola_font</span><span class="p">)</span>
+
+<span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">defaultPageSize</span>
+<span class="n">pdf_content</span> <span class="o">=</span> <span class="s">"It's emoji time </span><span class="se">\u263A</span><span class="s"> </span><span class="se">\U0001F61C</span><span class="s">. Let's add some cool emotions </span><span class="se">\U0001F48F</span><span class="s"> </span><span class="se">\u270C</span><span class="s">. And some more </span><span class="se">\u2764</span><span class="s"> </span><span class="se">\U0001F436</span><span class="s">"</span>
+
+<span class="n">styles</span> <span class="o">=</span> <span class="n">getSampleStyleSheet</span><span class="p">()</span>
+<span class="n">styles</span><span class="p">[</span><span class="s">"Title"</span><span class="p">].</span><span class="n">fontName</span> <span class="o">=</span> <span class="s">'Symbola'</span>
+<span class="n">style</span> <span class="o">=</span> <span class="n">styles</span><span class="p">[</span><span class="s">"Title"</span><span class="p">]</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">replace_with_emoji_pdf</span><span class="p">(</span><span class="n">Emoji</span><span class="p">.</span><span class="n">to_image</span><span class="p">(</span><span class="n">pdf_content</span><span class="p">),</span> <span class="n">style</span><span class="p">.</span><span class="n">fontSize</span><span class="p">)</span>
+
+<span class="n">para</span> <span class="o">=</span> <span class="n">Paragraph</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span>
+<span class="n">canv</span> <span class="o">=</span> <span class="n">canvas</span><span class="p">.</span><span class="n">Canvas</span><span class="p">(</span><span class="s">'emoji.pdf'</span><span class="p">)</span>
+
+<span class="n">para</span><span class="p">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+<span class="n">para</span><span class="p">.</span><span class="n">drawOn</span><span class="p">(</span><span class="n">canv</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">canv</span><span class="p">.</span><span class="n">save</span><span class="p">()</span></code></pre></figure>
+
+<p>Here is the preview how it looks with <code class="language-plaintext highlighter-rouge">emojipy</code></p>
+
+<p><img src="/asserts/images/emoji_emojipy.png" border="1px solid blue" /></p>
+
+<p>Wooo!! This is what we wanted!!</p>
+
+<h2 id="references">References</h2>
+
+<ul>
+  <li><a href="http://unicode.org/emoji/charts/full-emoji-list.html">http://unicode.org/emoji/charts/full-emoji-list.html</a></li>
+  <li><a href="http://apps.timwhitlock.info/emoji/tables/unicode">http://apps.timwhitlock.info/emoji/tables/unicode</a></li>
+  <li><a href="http://www.joelonsoftware.com/articles/Unicode.html">http://www.joelonsoftware.com/articles/Unicode.html</a></li>
+</ul>
+:ET

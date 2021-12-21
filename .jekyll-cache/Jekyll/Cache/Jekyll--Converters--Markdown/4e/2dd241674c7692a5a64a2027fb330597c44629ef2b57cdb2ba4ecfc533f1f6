@@ -1,0 +1,21 @@
+I"$<p>If you had ever done some kind of multi-threaded or concurrent programming in any languages, then there is a high chance that you would have used or at least heard about Condition Variable.</p>
+
+<p>This post is an attempt to explain my understanding of the Condition Variable, which I happened to use in one of my recent projects. All the code samples are written in Go, but the concepts remains same irrespective of the programming languages.</p>
+
+<blockquote>
+  <p>A condition variable is basically a container of threads that are waiting for a certain condition.</p>
+</blockquote>
+
+<p>That definition from wikipedia is pretty straight forward. And don’t worry if that still confusing. I hope this blog may help you understand what it is and how it can be used.</p>
+
+<p>Condition Variable is one of the synchronization mechanisms.</p>
+
+<p>Before using Condition Variable, lets understand what problem it tries to solve.</p>
+
+<p>Lets start simple.</p>
+
+<blockquote>
+  <p>How to make a goroutine wait till some event(condition) occur?.</p>
+</blockquote>
+
+:ET

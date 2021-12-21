@@ -1,0 +1,110 @@
+I"7<p>Hi Everyone. Welcome to Django internal series. Goal of this entire series is to share my experience on understanding the
+internals of django.</p>
+
+<p>In part 1 of this series we try to understand why its important to understand
+django internals.</p>
+
+<p>I started using django about an year ago. It’s a part of our <a href="https://medium.com/@launchyard/our-typical-technology-stack-b52371035e4b">company’s
+technology stack</a>. We love building apps with Django(of course who wouldn’t?). During early
+stage of using django, I really suck at debugging as I felt django is
+doing lot of magic under the hood. Few basic questions started bothering me.</p>
+
+<ol>
+  <li>I am declaring all fields in model as <strong>class variables</strong>. How come I am able to
+access those as <strong>instance variables</strong> on any of those model instances?</li>
+  <li>What is happening when I access any field of a model instance. For e.g take
+a look at <code class="language-plaintext highlighter-rouge">simple_django_model.py</code> snippet below. There we have single
+field called <code class="language-plaintext highlighter-rouge">email</code> of type <code class="language-plaintext highlighter-rouge">models.EmailField()</code>. Now if try to get
+<code class="language-plaintext highlighter-rouge">user.email</code> it should technically return <code class="language-plaintext highlighter-rouge">models.EmailField</code> instance right?, but django
+does some magic and return the exact email address as string <code class="language-plaintext highlighter-rouge">kavirajkanagaraj@gmail.com</code></li>
+  <li>How does “class Meta” inside any model affects the model behaviour?</li>
+  <li>What does really ‘app’ mean to django?(HINT: Every directory with
+<code class="language-plaintext highlighter-rouge">__init__.py</code> is not an app)</li>
+  <li>How django creates actual model instance from db tables?</li>
+</ol>
+
+<p>And much more basic questions..</p>
+
+<!--break-->
+
+<p>These questions made me to dig into <a href="https://github.com/django/django">source code</a> of django. While doing that
+<a href="http://www.amazon.com/Pro-Django-Experts-Voice-Development/dp/1430258098">Pro Django by Marty Alchin</a> helped a lot.</p>
+
+<blockquote>
+  <p>Note: This Pro Django book is kind of outdated. Its written for django
+1.5 . During that time, AppCache was used instead of App Register which is one of
+the <a href="https://docs.djangoproject.com/en/1.9/ref/applications/#application-registry">great improvement</a>
+introduced in django 1.7. App Register is something which deals with how django
+loads and register every app. We will cover App Register in depth in the
+upcoming series.</p>
+</blockquote>
+
+<p>But most of the fundamental design and architecture of django remains same as explained in this book. Its
+really a great book to read if you are interested in understanding django internals.</p>
+
+<h2 id="why-need-to-understand-django-internals-anyway">Why need to understand django internals anyway?</h2>
+<ul>
+  <li>Makes debugging pleasant</li>
+  <li>To understand some of the advanced python concepts and strategies. So that
+you can apply it in your own projects</li>
+  <li>Can help you in becoming better django developer</li>
+  <li>Can help in contributing to django open source</li>
+  <li>And of course its fun to know how something works under the hood !!!</li>
+</ul>
+
+<h2 id="some-insights">Some insights</h2>
+<p>In rest of this post, I will try to address top 2 questions metioned before.</p>
+
+<blockquote>
+  <p>Note: All code examples are tested using python3.5 and django1.9</p>
+</blockquote>
+
+<p>Consider the following code snippets.
+First one is a simple django model with single email field. In second snippet I
+tried to do the same with raw python <code class="language-plaintext highlighter-rouge">object</code> just to understand the
+importants of <code class="language-plaintext highlighter-rouge">models.Model</code></p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/da51e3762bdaeaf8413e.js"> </script>
+
+<h3 id="question-1">Question 1</h3>
+<p>I am declaring all fields in model as <strong>class variables</strong>. How come I am able to
+access those as <strong>instance variables</strong> on any of those model instances?</p>
+
+<h3 id="analysis">Analysis</h3>
+<p>In both the snippets, email attribute is a class variable. But how come I couldn’t
+access email as class attribute in django model?. The answer is actually the
+way django create <code class="language-plaintext highlighter-rouge">Model</code> Class using metaclass called <code class="language-plaintext highlighter-rouge">ModelBase</code>. In
+<code class="language-plaintext highlighter-rouge">ModelBase, __new__</code> method is overriden to alter the behaviour of the
+creation of <code class="language-plaintext highlighter-rouge">Model</code> class. In this step all the class attributes are converted to instance attribues (source code link <a href="https://github.com/django/django/blob/master/django/db/models/base.py#L157-L158">here</a>). Thats the reason we could access
+all attributes as instance attributes and not as class attributes in any django model.</p>
+
+<h3 id="question-2">Question 2</h3>
+<p>What is happening when I access any field of a model instance. For e.g take
+a look at <code class="language-plaintext highlighter-rouge">simple_django_model.py</code> snippet. There we have single
+field called <code class="language-plaintext highlighter-rouge">email</code> of type <code class="language-plaintext highlighter-rouge">models.EmailField()</code>. Now if try to get
+<code class="language-plaintext highlighter-rouge">user.email</code> it should technically return <code class="language-plaintext highlighter-rouge">models.EmailField</code> instance right?, but django
+does some magic and return the exact email address as string <code class="language-plaintext highlighter-rouge">kavirajkanagaraj@gmail.com</code></p>
+
+<h3 id="analysis-1">Analysis</h3>
+<p>In both the snippets, we tried to access the email attribute from instance of
+User model. Technically <code class="language-plaintext highlighter-rouge">email</code> attribute is of type <code class="language-plaintext highlighter-rouge">models.EmailField</code>. So whenever I
+tried to access <code class="language-plaintext highlighter-rouge">email</code> field, It should give me <code class="language-plaintext highlighter-rouge">EmailField</code> instance like
+in second snippet. But django is smart and gives us back exact email addres as
+string itself. To understand how it works, consider below snippet(slightly
+modified version of second snippet)</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/ee51a1ef11ff4f6c6ba2.js"> </script>
+
+<p>Now we are able to get the exact email address instead of EmailField
+instance just like in <code class="language-plaintext highlighter-rouge">User</code> Model. This feature in python is known as getters and setters(using
+<code class="language-plaintext highlighter-rouge">__set__</code> you can set the email address directly). Django uses this feature
+behind the scene everytime you set or get any model attributes.</p>
+
+<p>We will of course discuss about “Model creation” and “getters, setters” in much
+more depth in next part of series which completely deals with internals of only
+Django model</p>
+
+<p>Please let me know your thoughts in comments.</p>
+:ET

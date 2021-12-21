@@ -1,0 +1,32 @@
+I"�<h2 id="blog-posts">Blog posts</h2>
+
+<ul>
+  <li>
+    <p>24 Sep 2019 » <a href="/project-to-learn-distributed-systems/">A project to learn Distributed Systems</a></p>
+  </li>
+  <li>
+    <p>16 Sep 2019 » <a href="/going-to-recurse-center/">What I want to do at Recurse Center</a></p>
+  </li>
+  <li>
+    <p>20 Aug 2017 » <a href="/understanding-condition-variable-in-go/">Understanding Condition Variable in Go</a></p>
+  </li>
+  <li>
+    <p>17 Apr 2016 » <a href="/go-gorm-using-joins/">Go-gorm: JOINS make life easier!</a></p>
+  </li>
+  <li>
+    <p>07 Dec 2015 » <a href="/django-internals-series-part1/">Django: Internals series - Gotchas</a></p>
+  </li>
+  <li>
+    <p>22 Aug 2015 » <a href="/generating-pdf-containing-emoji-python/">Python: Generating pdf containing emojis using reportlab</a></p>
+  </li>
+  <li>
+    <p>26 Jul 2015 » <a href="/intro-to-emacs-lisp-review/">Review: Emacs Lisp Intro Manual</a></p>
+  </li>
+  <li>
+    <p>11 Jul 2015 » <a href="/split-window-with-different-buffer-in-emacs/">Emacs: Split window with different buffer</a></p>
+  </li>
+  <li>
+    <p>05 Jul 2015 » <a href="/understanding-regular-expression-parsing/">Understanding regular expression parsing</a></p>
+  </li>
+</ul>
+:ET

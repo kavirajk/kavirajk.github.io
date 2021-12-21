@@ -1,0 +1,28 @@
+I"ÿ<p>I have been using <a href="http://golang.org/">go-lang</a> and <a href="http://jinzhu.me/gorm/">gorm</a> to build web apps for a while. Though <em>gorm</em>
+provids <a href="http://jinzhu.me/gorm/">very good documentation</a>, I think it lacks some real-time examples. Here is
+what I have learned how to use gorm for advanced queries. Most importantly to get data
+from multiple tables that are not directly related.</p>
+
+<p>Let me try explaining the concepts with three use cases.</p>
+
+<p>Consider following models</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">type</span> <span class="n">Launguage</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">ID</span> <span class="kt">uint</span> <span class="s">`gorm:"primary_key"`</span>
+	<span class="n">Name</span> <span class="kt">string</span>
+<span class="p">}</span>
+	
+<span class="k">type</span> <span class="n">Movie</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">ID</span> <span class="kt">uint</span> <span class="s">`gorm:"primary_key"`</span>
+	<span class="n">Title</span> <span class="kt">string</span>
+	<span class="n">LaunguageID</span> <span class="kt">uint</span>
+	<span class="n">Launguage</span> <span class="n">Launguage</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Artist</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">ID</span> <span class="kt">uint</span> <span class="s">`gorm:"primary_key"`</span>
+	<span class="n">Name</span> <span class="kt">string</span>
+	<span class="n">Movies</span> <span class="p">[]</span><span class="n">Movie</span> <span class="s">`gorm:"many2many:artist_movies"`</span>
+<span class="p">}</span></code></pre></figure>
+
+:ET

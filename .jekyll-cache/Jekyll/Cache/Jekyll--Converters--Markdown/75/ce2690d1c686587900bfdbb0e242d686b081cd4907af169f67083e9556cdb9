@@ -1,0 +1,170 @@
+I" <p>Once you start using emacs for most of your editing/coding tasks, then that will make you serious about using it productively</p>
+
+<p>From then on, you can no longer use Emacs without customizing it. Yea, of course there are tons of elisp code snippet out there to customize it just by copy pasting without understanding what it does or how it works.</p>
+
+<p>But that no longer works on the longer run. At some point of time you have get started on learning Emacs lisp.</p>
+
+<p>Same thing happened to me few weeks back. I got tired of customizing emacs just by including some piece of elisp code from somewhere on the internet into my <code class="language-plaintext highlighter-rouge">.emacs</code> file without even understanding what the code does.</p>
+
+<p>So at the end,</p>
+
+<ul>
+  <li>My .emacs file got messy without organizing.</li>
+  <li>Its very frustating to debug if something goes wrong.</li>
+  <li>I started to get afraid of parenthesis 😧</li>
+</ul>
+
+<p>Just then, I figured it out I just need to get started on learning Emacs lisp.</p>
+
+<!--break-->
+
+<h2 id="why-need-to-learn-emacs-lisp-anyway">Why need to Learn Emacs Lisp, anyway?</h2>
+<ul>
+  <li>To understand how emacs works</li>
+  <li>To customize emacs</li>
+  <li>To write extension packages for emacs</li>
+</ul>
+
+<h2 id="emacs-lisp-intro-manual">Emacs Lisp Intro Manual</h2>
+
+<p>Many articles in various blogs already recommending <a href="https://www.gnu.org/software/emacs/manual/eintr.html">Introduction to programming in Emacs Lisp</a> manual to get started on emacs lisp. So I just did give a try</p>
+
+<p>This manual comes in-built within emacs as well(Im using GNU Emacs 24.5).  To read inside emacs type <code class="language-plaintext highlighter-rouge">C-h i m Emacs Lisp Intro</code></p>
+
+<p>Here is a topics covered in manual</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Topic</th>
+      <th>Summary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>List Processing</td>
+      <td>What is Lisp?</td>
+    </tr>
+    <tr>
+      <td>Practicing Evaluation</td>
+      <td>Running several programs.</td>
+    </tr>
+    <tr>
+      <td>Writing Defuns</td>
+      <td>How to write function definitions.</td>
+    </tr>
+    <tr>
+      <td>Buffer Walk Through</td>
+      <td>Exploring a few buffer-related functions.</td>
+    </tr>
+    <tr>
+      <td>More Complex</td>
+      <td>A few, even more complex functions.</td>
+    </tr>
+    <tr>
+      <td>Narrowing &amp; Widening</td>
+      <td>Restricting your and Emacs attention to a region</td>
+    </tr>
+    <tr>
+      <td>car cdr &amp; cons</td>
+      <td>Fundamental functions in Lisp.</td>
+    </tr>
+    <tr>
+      <td>Cutting &amp; Storing Text</td>
+      <td>Removing text and saving it.</td>
+    </tr>
+    <tr>
+      <td>List Implementation</td>
+      <td>How lists are implemented in the computer.</td>
+    </tr>
+    <tr>
+      <td>Yanking</td>
+      <td>Pasting stored text.</td>
+    </tr>
+    <tr>
+      <td>Loops &amp; Recursion</td>
+      <td>How to repeat a process.</td>
+    </tr>
+    <tr>
+      <td>Regexp Search</td>
+      <td>Regular expression searches.</td>
+    </tr>
+    <tr>
+      <td>Counting Words</td>
+      <td>A review of repetition and regexps.</td>
+    </tr>
+    <tr>
+      <td>Words in a defun</td>
+      <td>Counting words in a ‘defun’.</td>
+    </tr>
+    <tr>
+      <td>Readying a Graph</td>
+      <td>A prototype graph printing function.</td>
+    </tr>
+    <tr>
+      <td>Emacs Initialization</td>
+      <td>How to write a ‘.emacs’ file.</td>
+    </tr>
+    <tr>
+      <td>Debugging</td>
+      <td>How to run the Emacs Lisp debuggers.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>One more Good thing is it comes with exercises so that you can practice what you have learnt at the end of the chapter.</p>
+
+<p>Most of the exercises are just straightforword and easy. Some exercies on Regular expressions, Recursion and Drawing Graph were bit difficult for me.</p>
+
+<h3 id="my-favouriteand-interesting-topics">My Favourite(and Interesting) topics</h3>
+
+<ul>
+  <li><strong>Buffer related functions:</strong> Understanding how some of the basic buffer related functions works<code class="language-plaintext highlighter-rouge">(mark-whole-buffer)</code>, <code class="language-plaintext highlighter-rouge">(append-to-buffer)</code>, <code class="language-plaintext highlighter-rouge">(copy-to-buffer)</code> and <code class="language-plaintext highlighter-rouge">(insert-buffer)</code></li>
+  <li><strong>Regular expressions:</strong> Understanding how regular expressions are used in finding end-of-sentence, end-of-paragraph, end-of-definition in functions like <code class="language-plaintext highlighter-rouge">(forward-paragraph)</code> and <code class="language-plaintext highlighter-rouge">(forward-sentence)</code></li>
+  <li><strong>Graph project:</strong> This is one of the coolest chapter. Counting and displaying the number of words in <code class="language-plaintext highlighter-rouge">defun</code> of many elisp files as a graph</li>
+  <li><strong>Basic customizing of .emacs file:</strong> Basic customisation including how to add ‘hook’, setting up ‘file-local-variables’, setting up key-bindings, X11 color customization etc.</li>
+</ul>
+
+<h3 id="other-things-you-will-learn">Other things you will learn:</h3>
+
+<ul>
+  <li><strong>How to get help within emacs easily:</strong> 
+If you find any new function that you want to explore and know more about just type <code class="language-plaintext highlighter-rouge">C-h f</code> and ‘function name’. You will find function’s documentation along with its source code link 😃</li>
+  <li><strong>You will get chance to look into some of the real elisp
+code</strong> that is part of emacs and you will understand how that works</li>
+  <li><strong>No more afraid of parenthesis</strong>.😎</li>
+  <li><strong>That awesome feeling</strong> when you understand some elisp code that you copy pasted before.💪🏽</li>
+</ul>
+
+<h3 id="things-i-learned-accidentally-while-reading">Things I learned accidentally while reading</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">C-M-h</code> - to select a whole function definition(any language mode)</li>
+  <li><code class="language-plaintext highlighter-rouge">C-M-a</code> and <code class="language-plaintext highlighter-rouge">C-M-e</code> - to goto beginning/end of definition</li>
+  <li><code class="language-plaintext highlighter-rouge">M-x add-file-local-variable-prop-line</code> - to adding any ‘file-local-variable’. Say, setting ‘coding system’ at top of the file like
+<code class="language-plaintext highlighter-rouge">-*- coding: utf-8 -*-</code>.</li>
+</ul>
+
+<h3 id="exercises-and-solutions">Exercises and Solutions:</h3>
+
+<p>You can find solutions to all the exercises in the manual on my <a href="https://github.com/kavirajk/Solutions-Emacs-Lisp-Intro">github repo</a>. Any improvement or suggestions are welcome. If you are viewing the source file inside emacs, then you can execute any elisp expression just by typing <code class="language-plaintext highlighter-rouge">C-x C-e</code> at the end of the expression.</p>
+
+<p>On the whole, I enjoyed reading the manual. Hope anyone who wants to start customizing the Emacs would enjoy as much as I did.</p>
+
+<p><a href="https://www.gnu.org/software/emacs/manual/eintr.html">Introduction to programming in Emacs Lisp</a> covers basics of emacs lisp very well so that you can do basic emacs customizations and extensions. That being said there are many more important topics(like Macros) not touched by this manual.</p>
+
+<p>The comprehensive guide for emacs lisp would be another manual called <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/index.html">The GNU Emacs Lisp Reference Manual</a></p>
+
+<blockquote>
+  <p>“You don’t have to like Emacs to like it”—this seemingly paradoxical
+statement is the secret of GNU Emacs.  The plain, ‘out of the box’ Emacs
+is a generic tool.  Most people who use it, customize it to suit
+themselves.</p>
+</blockquote>
+
+<blockquote>
+  <p>– <cite>Emacs Lisp Intro Manual</cite></p>
+</blockquote>
+
+<p>You enjoyed reading any manuals or books on emacs or linux? I am glad to know in comments</p>
+:ET

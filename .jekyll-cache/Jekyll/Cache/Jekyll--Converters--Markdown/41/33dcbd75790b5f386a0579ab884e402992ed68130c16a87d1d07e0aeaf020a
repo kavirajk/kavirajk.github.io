@@ -1,0 +1,8 @@
+I"ˆ<p>Itâ€™s common to split windows while working in emacs. By default, whenever we
+split windows in emacs the newly created window will also have the same
+buffer(same buffer in two windows). So it is always needed
+to change to another buffer by <code class="language-plaintext highlighter-rouge">C-x b</code> after splitting it.</p>
+
+<p>We can customize it by little elisp code as below.</p>
+
+:ET

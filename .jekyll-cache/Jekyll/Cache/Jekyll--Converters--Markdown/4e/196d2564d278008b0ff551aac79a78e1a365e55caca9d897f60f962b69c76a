@@ -1,0 +1,21 @@
+I"<p>I’ll be joining <a href="https://www.recurse.com/">Recurse Center</a> next week.</p>
+
+<p>Recurse Center(RC) is where people spend 6 or 12 weeks working on getting better at programming.</p>
+
+<p>This blog post I try to put some ideas of projects (and its scopes) that I would like to work on at RC. Hope this will help me keep on the track and also can be useful during retrospection.</p>
+
+<p>I mostly work with Go and Web application in my daily Job. I will try to avoid that <em>comfort zone</em> as much as possible.</p>
+
+<p>I will be using my project called <strong>Heck(Distributed health checker)</strong> to explore specific areas in distributed systems.</p>
+<ul>
+  <li>Causal Consistency</li>
+  <li>Co-ordination Avoidance</li>
+  <li>Failure Detectors</li>
+  <li>Load Balancing</li>
+  <li>Replicated Data types</li>
+  <li>Gossip</li>
+</ul>
+
+<p>Here is the <a href="https://paper.dropbox.com/doc/Heck-A-distributed-health-checker--Ak3aLZkVHqDLGRNLy~NHtxsFAg-WptgaNKpocdUVc1Ir8mr2">design spec</a> of the project for more details.</p>
+
+:ET

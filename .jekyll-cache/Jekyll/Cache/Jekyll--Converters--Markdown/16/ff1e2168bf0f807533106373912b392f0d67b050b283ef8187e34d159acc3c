@@ -1,0 +1,165 @@
+I"�<<p>I have been using <a href="http://golang.org/">go-lang</a> and <a href="http://jinzhu.me/gorm/">gorm</a> to build web apps for a while. Though <em>gorm</em>
+provids <a href="http://jinzhu.me/gorm/">very good documentation</a>, I think it lacks some real-time examples. Here is
+what I have learned how to use gorm for advanced queries. Most importantly to get data
+from multiple tables that are not directly related.</p>
+
+<p>Let me try explaining the concepts with three use cases.</p>
+
+<p>Consider following models</p>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">type</span> <span class="n">Launguage</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">ID</span> <span class="kt">uint</span> <span class="s">`gorm:"primary_key"`</span>
+	<span class="n">Name</span> <span class="kt">string</span>
+<span class="p">}</span>
+	
+<span class="k">type</span> <span class="n">Movie</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">ID</span> <span class="kt">uint</span> <span class="s">`gorm:"primary_key"`</span>
+	<span class="n">Title</span> <span class="kt">string</span>
+	<span class="n">LaunguageID</span> <span class="kt">uint</span>
+	<span class="n">Launguage</span> <span class="n">Launguage</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Artist</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">ID</span> <span class="kt">uint</span> <span class="s">`gorm:"primary_key"`</span>
+	<span class="n">Name</span> <span class="kt">string</span>
+	<span class="n">Movies</span> <span class="p">[]</span><span class="n">Movie</span> <span class="s">`gorm:"many2many:artist_movies"`</span>
+<span class="p">}</span></code></pre></figure>
+
+<!--break-->
+
+<p>The models are simple. <code class="language-plaintext highlighter-rouge">Movie</code> have <em>foreign key</em> to <code class="language-plaintext highlighter-rouge">Launguage</code> and <code class="language-plaintext highlighter-rouge">Artist</code>
+have <em>many-to-many</em> relationship with <code class="language-plaintext highlighter-rouge">Movie</code> with <code class="language-plaintext highlighter-rouge">artist_movies</code> as
+intermediate table. Important thing to note here is <code class="language-plaintext highlighter-rouge">Artist</code> have no direct
+relationship with <code class="language-plaintext highlighter-rouge">Language</code> model. Lets populate the db with some data(Im
+using postgres here, though you can you any database)</p>
+
+<p>After populating above modes in db, the tables look like below</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">gorm</span><span class="o">=#</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">languages</span><span class="p">;</span>
+ <span class="n">id</span> <span class="o">|</span>  <span class="n">name</span>   
+<span class="c1">----+---------</span>
+  <span class="mi">2</span> <span class="o">|</span> <span class="n">tamil</span>
+  <span class="mi">3</span> <span class="o">|</span> <span class="n">hindi</span>
+  <span class="mi">1</span> <span class="o">|</span> <span class="n">english</span>
+<span class="p">(</span><span class="mi">3</span> <span class="k">rows</span><span class="p">)</span>
+
+<span class="n">gorm</span><span class="o">=#</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">movies</span><span class="p">;</span>
+ <span class="n">id</span> <span class="o">|</span>    <span class="n">title</span>    <span class="o">|</span> <span class="n">language_id</span> 
+<span class="c1">----+-------------+-------------</span>
+  <span class="mi">1</span> <span class="o">|</span> <span class="n">Nayagan</span>     <span class="o">|</span>           <span class="mi">2</span>
+  <span class="mi">2</span> <span class="o">|</span> <span class="n">Anbe</span> <span class="n">sivam</span>  <span class="o">|</span>           <span class="mi">2</span>
+  <span class="mi">3</span> <span class="o">|</span> <span class="mi">3</span> <span class="n">idiots</span>    <span class="o">|</span>           <span class="mi">3</span>
+  <span class="mi">4</span> <span class="o">|</span> <span class="n">Shamithab</span>   <span class="o">|</span>           <span class="mi">3</span>
+  <span class="mi">5</span> <span class="o">|</span> <span class="n">Dark</span> <span class="n">Knight</span> <span class="o">|</span>           <span class="mi">1</span>
+  <span class="mi">6</span> <span class="o">|</span> <span class="mi">310</span> <span class="k">to</span> <span class="n">Yuma</span> <span class="o">|</span>           <span class="mi">1</span>
+<span class="p">(</span><span class="mi">6</span> <span class="k">rows</span><span class="p">)</span>
+
+<span class="n">gorm</span><span class="o">=#</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">artists</span><span class="p">;</span>
+ <span class="n">id</span> <span class="o">|</span>       <span class="n">name</span>       
+<span class="c1">----+------------------</span>
+  <span class="mi">1</span> <span class="o">|</span> <span class="n">Madhavan</span>
+  <span class="mi">2</span> <span class="o">|</span> <span class="n">Kamal</span> <span class="n">Hassan</span>
+  <span class="mi">3</span> <span class="o">|</span> <span class="n">Dhanush</span>
+  <span class="mi">4</span> <span class="o">|</span> <span class="n">Aamir</span> <span class="n">Khan</span>
+  <span class="mi">5</span> <span class="o">|</span> <span class="n">Amitabh</span> <span class="n">Bachchan</span>
+  <span class="mi">6</span> <span class="o">|</span> <span class="n">Christian</span> <span class="n">Bale</span>
+  <span class="mi">7</span> <span class="o">|</span> <span class="n">Russell</span> <span class="n">Crowe</span>
+<span class="p">(</span><span class="mi">7</span> <span class="k">rows</span><span class="p">)</span>
+
+<span class="n">gorm</span><span class="o">=#</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">artist_movies</span> <span class="p">;</span>
+ <span class="n">artist_id</span> <span class="o">|</span> <span class="n">movie_id</span> 
+<span class="c1">-----------+----------</span>
+         <span class="mi">1</span> <span class="o">|</span>        <span class="mi">2</span>
+         <span class="mi">1</span> <span class="o">|</span>        <span class="mi">3</span>
+         <span class="mi">2</span> <span class="o">|</span>        <span class="mi">1</span>
+         <span class="mi">2</span> <span class="o">|</span>        <span class="mi">2</span>
+         <span class="mi">3</span> <span class="o">|</span>        <span class="mi">4</span>
+         <span class="mi">4</span> <span class="o">|</span>        <span class="mi">3</span>
+         <span class="mi">5</span> <span class="o">|</span>        <span class="mi">4</span>
+         <span class="mi">6</span> <span class="o">|</span>        <span class="mi">5</span>
+         <span class="mi">6</span> <span class="o">|</span>        <span class="mi">6</span>
+         <span class="mi">7</span> <span class="o">|</span>        <span class="mi">6</span>
+<span class="p">(</span><span class="mi">10</span> <span class="k">rows</span><span class="p">)</span></code></pre></figure>
+
+<p>Now, the time for actual query. How would you make the following queries</p>
+
+<ol>
+  <li>
+    <p>Get the list of all artist who acted in “english” movies</p>
+  </li>
+  <li>
+    <p>Get the list the artists for movie “Nayagan”</p>
+  </li>
+  <li>
+    <p>Get the list of artists for movies “3 idiots”, “Shamitab” and “310 to Yuma”</p>
+  </li>
+</ol>
+
+<h3 id="get-list-of-all-artist-who-acted-in-english-movies">Get list of all artist who acted in “english” movies:</h3>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">var</span> <span class="n">artists</span> <span class="p">[]</span><span class="n">Artist</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Joins</span><span class="p">(</span><span class="s">"JOIN artist_movies on artist_movies.artist_id=artists.id"</span><span class="p">)</span><span class="o">.</span>
+	<span class="n">Joins</span><span class="p">(</span><span class="s">"JOIN movies on movies.id=artist_movies.movie_id"</span><span class="p">)</span><span class="o">.</span>
+	<span class="n">Joins</span><span class="p">(</span><span class="s">"JOIN languages on movies.language_id=languages.id"</span><span class="p">)</span><span class="o">.</span>
+	<span class="n">Where</span><span class="p">(</span><span class="s">"languages.name=?"</span><span class="p">,</span> <span class="s">"english"</span><span class="p">)</span><span class="o">.</span>
+	<span class="n">Group</span><span class="p">(</span><span class="s">"artists.id"</span><span class="p">)</span><span class="o">.</span><span class="n">Preload</span><span class="p">(</span><span class="s">"Movies"</span><span class="p">)</span><span class="o">.</span><span class="n">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="n">artists</span><span class="p">)</span><span class="o">.</span><span class="n">Error</span><span class="p">;</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+	<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+	
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">ar</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">artists</span> <span class="p">{</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c">/* output
+Kamal Hassan
+Madhavan
+*/</span></code></pre></figure>
+
+<h3 id="get-the-list-of-all-artists-who-acted-in-movie-nayagan">Get the list of all artists who acted in movie “Nayagan”</h3>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">var</span> <span class="n">artists</span> <span class="p">[]</span><span class="n">Artist</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Joins</span><span class="p">(</span><span class="s">"JOIN artist_movies on artist_movies.artist_id=artists.id"</span><span class="p">)</span><span class="o">.</span>
+	<span class="n">Joins</span><span class="p">(</span><span class="s">"JOIN movies on artist_movies.movie_id=movies.id"</span><span class="p">)</span><span class="o">.</span><span class="n">Where</span><span class="p">(</span><span class="s">"movies.title=?"</span><span class="p">,</span> <span class="s">"Nayagan"</span><span class="p">)</span><span class="o">.</span>
+	<span class="n">Group</span><span class="p">(</span><span class="s">"artists.id"</span><span class="p">)</span><span class="o">.</span><span class="n">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="n">artists</span><span class="p">)</span><span class="o">.</span><span class="n">Error</span><span class="p">;</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">ar</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">artists</span> <span class="p">{</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c">/* output
+Kamal Hassan
+*/</span></code></pre></figure>
+
+<h3 id="get-the-list-of-artists-who-acted-in-any-of-the-movies-3-idiots-shamitab-and-310-to-yuma">Get the list of artists who acted in any of the movies “3 idiots”, “Shamitab” and “310 to Yuma”</h3>
+
+<figure class="highlight"><pre><code class="language-go" data-lang="go"><span class="k">var</span> <span class="n">artists</span> <span class="p">[]</span><span class="n">Artist</span>
+
+<span class="k">if</span> <span class="n">err</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Joins</span><span class="p">(</span><span class="s">"JOIN artist_movies on artist_movies.artist_id=artists.id"</span><span class="p">)</span><span class="o">.</span>
+	<span class="n">Joins</span><span class="p">(</span><span class="s">"JOIN movies on artist_movies.movie_id=movies.id"</span><span class="p">)</span><span class="o">.</span>
+	<span class="n">Where</span><span class="p">(</span><span class="s">"movies.title in (?)"</span><span class="p">,</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">"3 idiots"</span><span class="p">,</span> <span class="s">"Shamitabh"</span><span class="p">,</span> <span class="s">"310 to Yuma"</span><span class="p">})</span><span class="o">.</span>
+	<span class="n">Group</span><span class="p">(</span><span class="s">"artists.id"</span><span class="p">)</span><span class="o">.</span><span class="n">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="n">artists</span><span class="p">)</span><span class="o">.</span><span class="n">Error</span><span class="p">;</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">ar</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">artists</span> <span class="p">{</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c">/* output
+Madhavan
+Aamir Khan
+Christian Bale
+Russell Crowe
+*/</span></code></pre></figure>
+
+<p>Without <code class="language-plaintext highlighter-rouge">Joins</code>, the above queries using <code class="language-plaintext highlighter-rouge">gorm</code> would involve lots of <code class="language-plaintext highlighter-rouge">where</code>
+clause and loops. But using <code class="language-plaintext highlighter-rouge">Joins</code> its just one simple database query.</p>
+
+<p><a href="https://gist.github.com/kavirajk/63f369727150455c33c79d0d2ec72c0e" target="_blank">Here</a> is
+the link to complete program used in this article.</p>
+
+<p>See you with more real-time examples for more advanced queries using <code class="language-plaintext highlighter-rouge">gorm</code> next time. Happy
+hacking.. !!</p>
+:ET

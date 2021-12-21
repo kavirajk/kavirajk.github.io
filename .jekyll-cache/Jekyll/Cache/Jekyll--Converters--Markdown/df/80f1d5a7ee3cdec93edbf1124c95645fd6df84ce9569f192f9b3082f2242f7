@@ -1,0 +1,48 @@
+I"�<p>It’s common to split windows while working in emacs. By default, whenever we
+split windows in emacs the newly created window will also have the same
+buffer(same buffer in two windows). So it is always needed
+to change to another buffer by <code class="language-plaintext highlighter-rouge">C-x b</code> after splitting it.</p>
+
+<p>We can customize it by little elisp code as below.</p>
+
+<!--break-->
+
+<p>put the below code in either <code class="language-plaintext highlighter-rouge">~/.emacs</code> file or <code class="language-plaintext highlighter-rouge">init.el</code> file in <code class="language-plaintext highlighter-rouge">~/.emacs.d</code> directory.</p>
+
+<figure class="highlight"><pre><code class="language-elisp" data-lang="elisp"><span class="p">(</span><span class="nv">eval-when-compile</span> <span class="p">(</span><span class="nb">require</span> <span class="ss">'cl</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">defun</span> <span class="nv">split-window-func-with-other-buffer</span> <span class="p">(</span><span class="nv">split-function</span><span class="p">)</span>
+  <span class="p">(</span><span class="nv">lexical-let</span> <span class="p">((</span><span class="nv">s-f</span> <span class="nv">split-function</span><span class="p">))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">()</span>
+      <span class="p">(</span><span class="nv">interactive</span><span class="p">)</span>
+      <span class="p">(</span><span class="nb">funcall</span> <span class="nv">s-f</span><span class="p">)</span>
+      <span class="p">(</span><span class="nv">set-window-buffer</span> <span class="p">(</span><span class="nv">next-window</span><span class="p">)</span> <span class="p">(</span><span class="nv">other-buffer</span><span class="p">)))))</span></code></pre></figure>
+
+<p>All this code does is pretty straight forward. <code class="language-plaintext highlighter-rouge">lexical-let</code> needs common lisp libraries.
+Thats what <code class="language-plaintext highlighter-rouge">(eval-when-compile (require 'cl))</code> does.</p>
+
+<p><code class="language-plaintext highlighter-rouge">'split-function'</code> is an argument which will be default elisp split function.
+In <code class="language-plaintext highlighter-rouge">(funcall s-f)</code> we call the default split function then using<code class="language-plaintext highlighter-rouge">(set-window-buffer)</code>elisp function we change the buffer of newly
+created window <code class="language-plaintext highlighter-rouge">(next-window)</code> with different buffer <code class="language-plaintext highlighter-rouge">(other-buffer)</code>.</p>
+
+<p>Also rebind the default split keys <code class="language-plaintext highlighter-rouge">C-x2</code>(horizontal) and <code class="language-plaintext highlighter-rouge">C-x3</code>(vertical) to our
+new custom split function.</p>
+
+<figure class="highlight"><pre><code class="language-elisp" data-lang="elisp"><span class="p">(</span><span class="nv">global-set-key</span> <span class="s">"\C-x2"</span> <span class="p">(</span><span class="nv">split-window-func-with-other-buffer</span> <span class="ss">'split-window-vertically</span><span class="p">))</span>
+<span class="p">(</span><span class="nv">global-set-key</span> <span class="s">"\C-x3"</span> <span class="p">(</span><span class="nv">split-window-func-with-other-buffer</span> <span class="ss">'split-window-horizontally</span><span class="p">))</span></code></pre></figure>
+
+<p>here <code class="language-plaintext highlighter-rouge">'split-window-vertically'</code> and <code class="language-plaintext highlighter-rouge">'split-window-horizontally'</code> are default
+elisp split functions which we pass as argument to our new custom split
+function <code class="language-plaintext highlighter-rouge">'split-window-func-with-other-buffer'</code>.</p>
+
+<p>I got this code from
+<a href="https://github.com/purcell/emacs.d/blob/master/lisp/init-windows.el#L15-L26">here</a>
+(I am not elisp master. Well! atleast not
+yet 😜). Thanks to <a href="https://github.com/purcell">Purcell</a>. In fact his
+<a href="https://github.com/purcell/emacs.d">.emacs.d</a> is well organised and very good
+resource to learn how to customize emacs and he is also helpful via mail 😊.</p>
+
+<p>I also found <a href="http://bzg.fr/learn-emacs-lisp-in-15-minutes.html">this</a> tutorial is very helpful in getting started on Emacs lisp.</p>
+
+<p>Happy hacking emacs!! 👍✌.</p>
+:ET

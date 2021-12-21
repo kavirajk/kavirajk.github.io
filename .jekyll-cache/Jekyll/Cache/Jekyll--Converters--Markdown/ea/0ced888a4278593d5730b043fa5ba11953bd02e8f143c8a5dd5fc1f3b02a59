@@ -1,0 +1,92 @@
+I"� <p>I’ll be joining <a href="https://www.recurse.com/">Recurse Center</a> next week.</p>
+
+<p>Recurse Center(RC) is where people spend 6 or 12 weeks working on getting better at programming.</p>
+
+<p>This blog post I try to put some ideas of projects (and its scopes) that I would like to work on at RC. Hope this will help me keep on the track and also can be useful during retrospection.</p>
+
+<p>I mostly work with Go and Web application in my daily Job. I will try to avoid that <em>comfort zone</em> as much as possible.</p>
+
+<p>I will be using my project called <strong>Heck(Distributed health checker)</strong> to explore specific areas in distributed systems.</p>
+<ul>
+  <li>Causal Consistency</li>
+  <li>Co-ordination Avoidance</li>
+  <li>Failure Detectors</li>
+  <li>Load Balancing</li>
+  <li>Replicated Data types</li>
+  <li>Gossip</li>
+</ul>
+
+<p>Here is the <a href="https://paper.dropbox.com/doc/Heck-A-distributed-health-checker--Ak3aLZkVHqDLGRNLy~NHtxsFAg-WptgaNKpocdUVc1Ir8mr2">design spec</a> of the project for more details.</p>
+
+<!--break-->
+
+<h2 id="causal-consistency">Causal Consistency</h2>
+<p>I think I should probably start here. <strong>Consistency Models</strong> are core part of any distributed system. Consistency models defines formally what behaviors are possible in a distributed system. For example consider social media where people put comments on post. Strict consistency models like <strong>Linearizability</strong> guarantees the comments are seen in same “Order” to all the clients who are viewing it by introducing the “global order” in some way(used in etcd, Consul key values stores).</p>
+
+<p>Then the other side is the weak consistency models like <strong>Eventual Consistency</strong> which just guarantees <em>at some point of time in future(eventually)</em> all the clients will see all the comments.</p>
+
+<p>The consistency model that I really care about for the project is something called <strong>Casual Consistency</strong> which doesn’t guarantee any global order like Linearlizability but guarantee order within events that are causally related. e.g: Comments that are reply to the other comments should appear in same order and doesn’t matter the ordering of other comments that are not casually related.</p>
+
+<p>Lots of concepts to understand here!. I will start with time and clocks. Physical clocks never works when it comes to distributed systems because each node can have their own physical clocks and cannot be assumed always be in sync. 
+We need to use logical clocks to track causality in distributed systems (Does event A <em>happened-before</em> event B or are those concurrent?)</p>
+
+<p>I should probably start playing with simple logical clocks like Lamport clocks, understand its down sides and why its not sufficient to capture causality. Then start playing with more modern logical clocks like <strong>Version Vectors</strong> and <strong>Dotted Version Vectors</strong> to capture causality relationship between events of different nodes.</p>
+
+<h2 id="co-ordination-avoidance">Co-ordination Avoidance</h2>
+<p>This is also related to Consistency models, If a system provides stronger consistency model say <strong>Linearizability</strong>, then every <em>state</em> change operations(say write operation in key value store) should be co-ordinated(Quorum, 2PC, etc). But this has additional cost and will be bottleneck when it comes to Scalability.</p>
+
+<p>So many things to learn here as well, Understanding the <strong>cost of co-ordination</strong> in distributed systems(how bad is it?), <strong>Universal Scalability Law</strong> and <strong>Blazes</strong>(<a href="https://arxiv.org/pdf/1309.3324.pdf">paper</a>) to analysis co-ordination in Distributed programs.</p>
+
+<h2 id="failure-detectors">Failure Detectors</h2>
+<p>We got to have failure detectors in any systems where workload is shared between multiple nodes. We need a system in place to identify crashes and failures of nodes and potentially add or remove nodes dynamically to the system. I need one for cluster membership. <strong>SWIM protocol</strong> is popular one. Probably I should start with much simpler protocol and building all the way up to SWIM.</p>
+
+<h2 id="load-balancing">Load Balancing</h2>
+<p>We need a way to assign workload to set of available nodes in a deterministic way. In Heck, additionally I also need Ownership assignment for Origin servers.</p>
+
+<p>Suggested algorithm is <strong>Rendezvous Hashing</strong>, but still I don’t know why can’t we just use <strong>Consistent Hashing</strong> for deterministic ownership.</p>
+
+<h2 id="replicated-data-types">Replicated Data Types</h2>
+<p>This is one of the important part of the distributed system I’m designing, Usually any state change in one node has to be replicated to other nodes. This is the problem of keeping all the nodes state in sync. No matter how much they diverge we make sure all the states will eventually be in sync</p>
+
+<p>Important to note here is we do provably correct way to reach “strong eventual consistent” state via something called <strong>Conflict Free Replicated Data Types (CRDT)</strong>. The basic idea is if we are able to make sure the operations on Distributed shared objects are <strong>Associative, Commutative and Idempotent</strong> then we can say no matter how much these shared objects diverge, they can always converge to same state irrespective of whether messages between the nodes are <strong>delayed, dropped, delivered-out-of-order or duplicated</strong> (Asynchrony of Networks)</p>
+
+<p>I believe this will be the most interesting part of the project.</p>
+
+<h2 id="gossip">Gossip</h2>
+<p>How does nodes communicate with each other?. They just <strong>Gossip</strong>. Important to note here is these nodes just have to communicate to exchange their states in a non-blocking way. Each node still serve its clients without co-ordination with other nodes.</p>
+
+<p>When talking about Gossip communication, we have two options, Pull and Push based gossip. Push is kind of fire and forget way of communicating. I still need to understand much deep about exact pros and cons of each.</p>
+
+<p>I’m going to use <strong>Rust</strong> as implementation language.</p>
+
+<p>RC is also lot about <strong>collaboration and discovering new things from fellow recursers!</strong>. So probably some part of my time will be spent collaborating on other interesting projects with fellow recursers.</p>
+
+<h2 id="other-ideas">Other Ideas!!</h2>
+
+<p>Other project ideas I might be able to work on if I happened to have more time!</p>
+
+<ul>
+  <li>Simple QUIC protocol implementation</li>
+  <li>Structured Regular expressions (‘diff’ could in principle report differences at the C function level instead of the line level)</li>
+  <li>A toy DNS system</li>
+  <li>A toy line based editor like ‘sed’ in Rust</li>
+  <li>Implement any modern consensus protocol like CASPaxos or Raft</li>
+  <li>Learn to write formal specification to design, model and verify concurrent systems (like TLA+ or Isabella/HAL)</li>
+</ul>
+
+<h2 id="references">References</h2>
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=1TIzPL4878Q">Anatomy of Distributed systems</a></li>
+  <li><a href="https://www.youtube.com/watch?v=em9zLzM8O7c">Consensus without Consistency</a></li>
+  <li><a href="https://arxiv.org/pdf/1402.2237.pdf">Co-ordination Avoidance in Database system</a></li>
+  <li><a href="http://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf">SWIM protocol</a></li>
+  <li><a href="http://doc.cat-v.org/bell_labs/structural_regexps/se.pdf">Structured Regular Expression</a>(1987)</li>
+  <li><a href="http://db.cs.berkeley.edu/jmh/papers/anna_ieee18.pdf">Anna KV store</a></li>
+  <li><a href="https://arxiv.org/pdf/1901.01930.pdf">Keeping CALM</a></li>
+  <li><a href="https://arxiv.org/pdf/1309.3324.pdf">Measuring Co-ordination</a></li>
+  <li><a href="https://github.com/ricardobcl/Dotted-Version-Vectors">Version vectors</a></li>
+  <li><a href="https://github.com/ipfs/research-CRDT">Good resources on CRDT in general</a></li>
+  <li><a href="https://leanpub.com/distributed-systems-for-practitioners">Distributed systems for practitioner</a></li>
+  <li><a href="http://book.mixu.net/distsys/single-page.html">Distributed systems for Fun and Profit</a></li>
+</ul>
+:ET

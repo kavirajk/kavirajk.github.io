@@ -1,0 +1,249 @@
+I"�V<p>If you had ever done some kind of multi-threaded or concurrent programming in any languages, then there is a high chance that you would have used or at least heard about Condition Variable.</p>
+
+<p>This post is an attempt to explain my understanding of the Condition Variable, which I happened to use in one of my recent projects. All the code samples are written in Go, but the concepts remains same irrespective of the programming languages.</p>
+
+<blockquote>
+  <p>A condition variable is basically a container of threads that are waiting for a certain condition.</p>
+</blockquote>
+
+<p>That definition from wikipedia is pretty straight forward. And don’t worry if that still confusing. I hope this blog may help you understand what it is and how it can be used.</p>
+
+<p>Condition Variable is one of the synchronization mechanisms.</p>
+
+<p>Before using Condition Variable, lets understand what problem it tries to solve.</p>
+
+<p>Lets start simple.</p>
+
+<blockquote>
+  <p>How to make a goroutine wait till some event(condition) occur?.</p>
+</blockquote>
+
+<!--break-->
+
+<p>Lets say the event be waiting for non-zero value in a struct field.</p>
+
+<h2 id="naive-way-use-infinite-for-loop">Naive way: Use infinite for loop.</h2>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">type</span> <span class="n">Record</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span>
+	<span class="n">data</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="n">wg</span> <span class="n">sync</span><span class="o">.</span><span class="n">WaitGroup</span>
+
+	<span class="n">rec</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">Record</span><span class="p">{}</span>
+	<span class="n">wg</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
+	<span class="k">go</span> <span class="k">func</span><span class="p">(</span><span class="n">rec</span> <span class="o">*</span><span class="n">Record</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="n">wg</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span>
+		<span class="k">for</span> <span class="p">{</span>
+			<span class="n">rec</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">rec</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+				<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Data: "</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+				<span class="n">rec</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+				<span class="k">return</span>
+			<span class="p">}</span>
+			<span class="n">rec</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+		<span class="p">}</span>
+	<span class="p">}(</span><span class="n">rec</span><span class="p">)</span>
+
+	<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="m">2</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+	<span class="n">rec</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+	<span class="n">rec</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s">"gopher"</span>
+	<span class="n">rec</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+
+	<span class="n">wg</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span> <span class="c">// wait till all goutine completes</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Though above approach would work, the goroutine keeps iterating in the for loop just by wasting the CPU cycles.</p>
+
+<p>We could use <code class="language-plaintext highlighter-rouge">time.Sleep</code>(Go runtime scheduler suspends a sleeping goroutine) but that wouldn’t be a right approach (say, how long the goroutine have to sleep?).</p>
+
+<p>The problem here is we need some way to make goroutine suspend while waiting(so that CPU cycles are not wasted) and some way to <em>signal</em> the suspended goroutine when particular event has occured (say when <code class="language-plaintext highlighter-rouge">data</code> field is non-empty in this case).</p>
+
+<p>Enter <strong>Condition</strong> <strong>Variable</strong>.</p>
+
+<p>In Go, you can create Condition Variable using <code class="language-plaintext highlighter-rouge">sync.Cond</code> type.</p>
+
+<p>It has one contructor function(<code class="language-plaintext highlighter-rouge">sync.NewCond()</code>) which takes a <code class="language-plaintext highlighter-rouge">sync.Locker</code> (usually simple mutex). Also it has three simple methods namely <code class="language-plaintext highlighter-rouge">Wait()</code>, <code class="language-plaintext highlighter-rouge">Signal()</code> and <code class="language-plaintext highlighter-rouge">Broadcast()</code>.</p>
+
+<p>Thats the complete interface to Condition Variable in Go.</p>
+
+<p>Coming back to the original problem. How to make a goroutine wait for some event?</p>
+
+<h2 id="better-way-use-synccond">Better way: Use <code class="language-plaintext highlighter-rouge">sync.Cond</code></h2>
+
+<p><code class="language-plaintext highlighter-rouge">Wait()</code> and <code class="language-plaintext highlighter-rouge">Signal()</code> methods are used to wait and signal the go-routine respectively</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Record</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span>
+	<span class="n">data</span> <span class="kt">string</span>
+
+	<span class="n">cond</span> <span class="o">*</span><span class="n">sync</span><span class="o">.</span><span class="n">Cond</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">NewRecord</span><span class="p">()</span> <span class="o">*</span><span class="n">Record</span> <span class="p">{</span>
+	<span class="n">r</span> <span class="o">:=</span> <span class="n">Record</span><span class="p">{}</span>
+	<span class="n">r</span><span class="o">.</span><span class="n">cond</span> <span class="o">=</span> <span class="n">sync</span><span class="o">.</span><span class="n">NewCond</span><span class="p">(</span><span class="o">&amp;</span><span class="n">r</span><span class="p">)</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">r</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="n">wg</span> <span class="n">sync</span><span class="o">.</span><span class="n">WaitGroup</span>
+
+	<span class="n">rec</span> <span class="o">:=</span> <span class="n">NewRecord</span><span class="p">()</span>
+	<span class="n">wg</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
+	<span class="k">go</span> <span class="k">func</span><span class="p">(</span><span class="n">rec</span> <span class="o">*</span><span class="n">Record</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="n">wg</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span>
+		<span class="n">rec</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+		<span class="n">rec</span><span class="o">.</span><span class="n">cond</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>
+		<span class="n">rec</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Data: "</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}(</span><span class="n">rec</span><span class="p">)</span>
+
+	<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="m">2</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+	<span class="n">rec</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+	<span class="n">rec</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s">"gopher"</span>
+	<span class="n">rec</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+
+	<span class="n">rec</span><span class="o">.</span><span class="n">cond</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
+
+	<span class="n">wg</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span> <span class="c">// wait till all goutine completes</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Interesting thing to note here is, there is no need for infinte loop anymore. Now the waiting go-routine get suspended (means Go scheduler can execute some other go-routine)</p>
+
+<blockquote>
+  <p>It may look like that the goroutine waiting(<code class="language-plaintext highlighter-rouge">rec.cond.Wait()</code>) is holding the lock whole time(<code class="language-plaintext highlighter-rouge">rec.Lock()</code>), but its not, Internally <code class="language-plaintext highlighter-rouge">cond.Wait()</code> unlocks it and it locks it again only when it wakes up by other go routine.</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">Signal()</code> notifies only one of the goroutines(longest waiting gouroutine) that are waiting on the condition variable.</p>
+
+<p>But wait! I’m a gopher and I know better way to signal one groutine from an another(<code class="language-plaintext highlighter-rouge">HINT: Channels</code>).</p>
+
+<p>The same example can be written using channels as follows.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Record</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span>
+	<span class="n">data</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="n">wg</span> <span class="n">sync</span><span class="o">.</span><span class="n">WaitGroup</span>
+
+	<span class="n">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="k">struct</span><span class="p">{})</span>
+
+	<span class="n">rec</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">Record</span><span class="p">{}</span>
+	<span class="n">wg</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
+	<span class="k">go</span> <span class="k">func</span><span class="p">(</span><span class="n">rec</span> <span class="o">*</span><span class="n">Record</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="n">wg</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span>
+		<span class="o">&lt;-</span><span class="n">ch</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Data: "</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}(</span><span class="n">rec</span><span class="p">)</span>
+
+	<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="m">2</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+	<span class="n">rec</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+	<span class="n">rec</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s">"gopher"</span>
+	<span class="n">rec</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+	<span class="n">ch</span> <span class="o">&lt;-</span> <span class="k">struct</span><span class="p">{}{}</span>
+
+	<span class="n">wg</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span> <span class="c">// wait till all goutine completes</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Nice. Now here comes the important question.</p>
+
+<blockquote>
+  <p>If this problem can be solved using channels, why do we need condition variable in the first place?</p>
+</blockquote>
+
+<p>Enters <code class="language-plaintext highlighter-rouge">Broadcast()</code> method of <code class="language-plaintext highlighter-rouge">sync.Cond</code>.</p>
+
+<p>Lets look at following senario.</p>
+
+<p>Say there are multiple goroutines waiting for some content in the buffer, how can we <em>keep</em> <em>notifing</em> all these goroutines whenever there is a new content in the buffer?.</p>
+
+<p>Condition variable is a perfect fit here.</p>
+
+<p>Following example try to explain this.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Record</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span>
+
+	<span class="n">buf</span>  <span class="kt">string</span>
+	<span class="n">cond</span> <span class="o">*</span><span class="n">sync</span><span class="o">.</span><span class="n">Cond</span>
+
+	<span class="n">writers</span> <span class="p">[]</span><span class="n">io</span><span class="o">.</span><span class="n">Writer</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">NewRecord</span><span class="p">(</span><span class="n">writers</span> <span class="o">...</span><span class="n">io</span><span class="o">.</span><span class="n">Writer</span><span class="p">)</span> <span class="o">*</span><span class="n">Record</span> <span class="p">{</span>
+	<span class="n">r</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">Record</span><span class="p">{</span><span class="n">writers</span><span class="o">:</span> <span class="n">writers</span><span class="p">}</span>
+	<span class="n">r</span><span class="o">.</span><span class="n">cond</span> <span class="o">=</span> <span class="n">sync</span><span class="o">.</span><span class="n">NewCond</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">r</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Record</span><span class="p">)</span> <span class="n">Prompt</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="p">{</span>
+
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">":&gt; "</span><span class="p">)</span>
+		<span class="k">var</span> <span class="n">s</span> <span class="kt">string</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Scanf</span><span class="p">(</span><span class="s">"%s"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span>
+
+		<span class="n">r</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+		<span class="n">r</span><span class="o">.</span><span class="n">buf</span> <span class="o">=</span> <span class="n">s</span>
+		<span class="n">r</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+
+		<span class="n">r</span><span class="o">.</span><span class="n">cond</span><span class="o">.</span><span class="n">Broadcast</span><span class="p">()</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Record</span><span class="p">)</span> <span class="n">Start</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="n">f</span> <span class="o">:=</span> <span class="k">func</span><span class="p">(</span><span class="n">w</span> <span class="n">io</span><span class="o">.</span><span class="n">Writer</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="p">{</span>
+			<span class="n">r</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+			<span class="n">r</span><span class="o">.</span><span class="n">cond</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>
+			<span class="n">fmt</span><span class="o">.</span><span class="n">Fprintf</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">buf</span><span class="p">)</span>
+			<span class="n">r</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">r</span><span class="o">.</span><span class="n">writers</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="n">f</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">writers</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="no">nil</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">f</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">os</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="s">"cond.log"</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">defer</span> <span class="n">f</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+	<span class="n">r</span> <span class="o">:=</span> <span class="n">NewRecord</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+	<span class="n">r</span><span class="o">.</span><span class="n">Start</span><span class="p">()</span>
+	<span class="n">r</span><span class="o">.</span><span class="n">Prompt</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Above code keep prompting for new data from the user.</p>
+
+<p>Here <code class="language-plaintext highlighter-rouge">NewRecord</code> can be called with multiple <code class="language-plaintext highlighter-rouge">io.Writers</code>(say log files, buffer, network connection etc..); each one waiting in separate go-routine on the condition variable <code class="language-plaintext highlighter-rouge">r.cond</code>. Each time there is a new data, all those waiting go-routines get notified via <code class="language-plaintext highlighter-rouge">r.cond.Broadcast()</code></p>
+
+<p>You can also think of handling the same behaviour using channel’s <code class="language-plaintext highlighter-rouge">close()</code> operation, so that all the waiting goroutine will receive zero value and proceed further. But what if you want to broadcast multiple times? (you cannot close the channel that is already closed, it panics if you do)</p>
+
+<p>Summary:</p>
+
+<ul>
+  <li>Go provides condition variable via <code class="language-plaintext highlighter-rouge">sync.Cond</code></li>
+  <li>Condition variables are useful if all you want is to signal other goroutines that some event has occured.</li>
+  <li>Use <code class="language-plaintext highlighter-rouge">Signal()</code> to notify one of the goroutines that is waiting for the longest period(Go uses FIFO data structure internally to keep track waiting goroutines on a condition variable).</li>
+  <li>Condition variables are perfect fit if you need to broadcast that some event has occured to all the goroutines waiting for that particular event.</li>
+</ul>
+
+<p>In Go, condition variables are used rarely because of this high level abstraction such as Channels. Still they are perfect in some cases as mentioned in the above examples.</p>
+
+<p>Happy coding in Go!</p>
+:ET
